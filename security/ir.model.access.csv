@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_softy_rec_doc_user,access_softy_rec_doc_user,model_softy_rec_doc,base.group_user,1,1,1,1
+access_softy_scorecard_all,access_softy_scorecard_all,model_softy_scorecard,base.group_user,1,1,1,1
+access_softy_phone_screening,access_phone_screening,model_softy_phone_screening,base.group_user,1,1,1,1
+access_softy_hist,access_softy_hist,model_softy_hist,base.group_user,1,1,1,1
+access_recruitment_candidate_list_user,access_recruitment_candidate_list_user,model_recruitment_candidate_list,base.group_user,1,1,1,1
+access_recruitment_candidate_batch_user,access_recruitment_candidate_batch_user,model_recruitment_candidate_batch,base.group_user,1,1,1,1
+access_smart_candidat_all,smart.candidat all,model_smart_candidat,base.group_user,1,1,1,1
+access_smart_offre_all,smart.offre all,model_smart_offre,base.group_user,1,1,1,1
+access_smart_import_batch_cv_wizard,smart.import.batch.cv.wizard all,model_smart_import_batch_cv_wizard,base.group_user,1,1,1,1

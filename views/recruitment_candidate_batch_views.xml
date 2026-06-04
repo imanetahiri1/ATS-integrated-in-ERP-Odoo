@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- ======================================
+         Recruitment Candidate Batch — SIMPLIFIED FORM
+         ====================================== -->
+    <record id="recruitment_candidate_batch_simple_form" model="ir.ui.view">
+      <field name="name">recruitment.candidate.batch.simple.form</field>
+      <field name="model">recruitment.candidate.batch</field>
+      <field name="priority" eval="20"/>
+      <field name="arch" type="xml">
+        <form string="Lot de Candidatures"
+              create="false"
+              edit="false"
+              style="max-width: 900px; margin: 1rem auto;">
+          <header class="d-flex justify-content-end gap-2 mb-3">
+            <button name="action_send_batch"
+                    type="object"
+                    class="btn btn-success"
+                    style="background-color: #28a745; box-shadow: 0 2px 6px rgba(0,0,0,0.1);"
+                    string="Envoyer le lot au Client"/>
+            <button name="action_view_candidates"
+                    type="object"
+                    class="btn btn-secondary"
+                    style="background-color: #6c757d; box-shadow: 0 2px 6px rgba(0,0,0,0.1);"
+                    icon="fa-users"
+                    string="Tous les candidats"/>
+          </header>
+          <sheet class="o_shadow_box"
+                 style="background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e0e0e0;">
+            <!-- Batch title -->
+            <div class="oe_title mb-4"
+                 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem;">
+              <h1 style="font-size: 1.8rem; color: #343a40; margin: 0;">
+                <field name="name"
+                       placeholder="Nom du lot…"
+                       style="color: #495057;"/>
+              </h1>
+            </div>
+
+            <!-- Job & Department -->
+            <group class="row gx-4 mb-4">
+              <div class="col">
+                <field name="job_id"
+                       readonly="1"
+                       options="{'no_create_edit': True}"
+                       class="form-control"
+                       style="background: #f8f9fa; border-radius: 4px;"/>
+              </div>
+              <div class="col">
+                <field name="department_id"
+                       readonly="1"
+                       class="form-control"
+                       style="background: #f8f9fa; border-radius: 4px;"/>
+              </div>
+            </group>
+
+            <!-- Only the candidates list -->
+            <field name="candidate_list_ids">
+              <list editable="bottom"
+                    class="table table-striped table-hover"
+                    style="border: 1px solid #e0e0e0; border-radius: 4px;">
+                <field name="applicant_id" string="Candidature"/>
+                <field name="name"         string="Nom"       readonly="1"/>
+                <field name="email"        string="Email"     readonly="1"/>
+                <field name="phone"        string="Téléphone" readonly="1"/>
+                <field name="poste"        string="Poste"     readonly="1"/>
+                <field name="date_added"   string="Ajouté le" readonly="1"/>
+                <field name="added_by"     string="Ajouté par" readonly="1"/>
+                <field name="notes"        string="Commentaires"/>
+              </list>
+            </field>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+    <!-- ======================================
+         Recruitment Candidate Batch — KANBAN VIEW
+         ====================================== -->
+    <record id="recruitment_candidate_batch_view_kanban" model="ir.ui.view">
+      <field name="name">recruitment.candidate.batch.kanban</field>
+      <field name="model">recruitment.candidate.batch</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="job_id" class="o_kanban_dashboard">
+          <field name="name"/>
+          <field name="job_id"/>
+          <field name="department_id"/>
+          <field name="candidate_count"/>
+          <field name="created_by"/>
+          <field name="create_date"/>
+
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click shadow-sm p-3 mb-4"
+                   style="border-radius: 12px; background-color: #ffffff;">
+                <div class="o_kanban_header d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <strong class="o_kanban_record_title"
+                            style="color: #343a40; font-size: 1.1rem;">
+                      <field name="name"/>
+                    </strong>
+                    <div class="text-muted small mt-1"
+                         style="color: #6c757d;">
+                      <span><field name="job_id"/></span>
+                      <span class="mx-1">•</span>
+                      <span><field name="department_id"/></span>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-info"
+                          style="font-size: 0.9rem; background-color: #17a2b8;">
+                      <i class="fa fa-users me-1" title="Candidats"/>
+                      <field name="candidate_count"/>
+                    </span>
+                  </div>
+                </div>
+                <div class="o_kanban_body mb-3">
+                  <div class="d-flex align-items-center small"
+                       style="color: #6c757d;">
+                    <i class="fa fa-user-circle me-1" title="Créé par"/>
+                    <field name="created_by"/>
+                    <span class="mx-2">•</span>
+                    <i class="fa fa-clock-o me-1" title="Créé le"/>
+                    <field name="create_date"/>
+                  </div>
+                </div>
+                <div class="o_kanban_footer">
+                  <button type="object"
+                          name="action_view_candidates"
+                          class="btn btn-sm btn-info"
+                          style="background-color: #17a2b8; border: none;"
+                          string="Voir candidats"/>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+
+    <!-- ======================================
+         Recruitment Candidate Batch — LIST VIEW
+         ====================================== -->
+    <record id="recruitment_candidate_batch_view_list" model="ir.ui.view">
+      <field name="name">recruitment.candidate.batch.list</field>
+      <field name="model">recruitment.candidate.batch</field>
+      <field name="arch" type="xml">
+        <list class="table table-bordered table-hover">
+          <field name="name"/>
+          <field name="job_id"/>
+          <field name="department_id"/>
+          <field name="candidate_count" string="Candidats"/>
+          <field name="create_date"    string="Créé le"/>
+          <field name="created_by"     string="Créé par"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- ======================================
+         Recruitment Candidate Batch — SEARCH VIEW
+         (unchanged)
+         ====================================== -->
+    <record id="recruitment_candidate_batch_view_search" model="ir.ui.view">
+      <field name="name">recruitment.candidate.batch.search</field>
+      <field name="model">recruitment.candidate.batch</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" string="Nom"/>
+          <field name="job_id" string="Poste"/>
+          <field name="department_id" string="Département"/>
+          <filter string="Mes lots"
+                  name="my_batches"
+                  domain="[('created_by','=',uid)]"/>
+          <group expand="0" string="Grouper par">
+            <filter string="Poste"
+                    name="group_job"
+                    context="{'group_by':'job_id'}"/>
+            <filter string="Département"
+                    name="group_department"
+                    context="{'group_by':'department_id'}"/>
+            <filter string="Créé par"
+                    name="group_created_by"
+                    context="{'group_by':'created_by'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+
+    <!-- ======================================
+         Action + Menu (unchanged)
+         ====================================== -->
+    <record id="action_recruitment_candidate_batch" model="ir.actions.act_window">
+      <field name="name">Lots de Candidatures</field>
+      <field name="res_model">recruitment.candidate.batch</field>
+      <field name="view_mode">kanban,list,form</field>
+      <field name="search_view_id"
+             ref="recruitment_candidate_batch_view_search"/>
+    </record>
+
+    <menuitem id="menu_recruitment_candidate_batch"
+              name="Lots de Candidatures"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_recruitment_candidate_batch"
+              sequence="16"/>
+
+  </data>
+</odoo>

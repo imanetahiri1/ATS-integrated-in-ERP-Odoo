@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- VUE LISTE OFFRES -->
+    <record id="view_smart_offre_list" model="ir.ui.view">
+        <field name="name">smart.offre.list</field>
+        <field name="model">smart.offre</field>
+        <field name="arch" type="xml">
+            <list string="Offres d'emploi"
+                  decoration-muted="state=='closed'">
+                <field name="reference_externe" string="ID" optional="show"/>
+                <field name="name" string="Titre du poste"/>
+                <field name="secteur_activite" string="Secteur" optional="show"/>
+                <field name="type_contrat" string="Contrat"/>
+                <field name="localisation"/>
+                <field name="experience_min" string="Exp. min"/>
+                <field name="nb_shortlist" string="Top N" optional="show"/>
+                <field name="candidat_count" string="Candidats"/>
+                <field name="state" decoration-success="state=='open'"
+                       decoration-danger="state=='closed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- VUE FORMULAIRE OFFRE -->
+    <record id="view_smart_offre_form" model="ir.ui.view">
+        <field name="name">smart.offre.form</field>
+        <field name="model">smart.offre</field>
+        <field name="arch" type="xml">
+            <form string="Offre d'emploi">
+                <header>
+                    <button name="action_voir_candidats"
+                            string="Voir les candidats"
+                            type="object" class="btn-primary"/>
+                    <button name="action_scorer_tous_candidats"
+                            string="Scorer tous les candidats"
+                            type="object" class="btn-secondary"/>
+                    <button name="%(action_import_batch_cv_wizard)d"
+                            string="Importer plusieurs CVs"
+                            type="action"
+                            class="btn-success"
+                            context="{'default_offre_id': id}"/>
+                    
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="open,closed"/>
+                </header>
+
+                <sheet>
+                    <!-- Stat buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-users"
+                                type="object" name="action_voir_candidats">
+                            <field name="candidat_count" widget="statinfo"
+                                   string="Candidats"/>
+                        </button>
+                    </div>
+
+                    <!-- Titre + ID -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Titre du poste..."/>
+                        </h1>
+                        <div class="d-flex gap-2 align-items-center">
+                            <span class="text-muted">ID :</span>
+                            <field name="reference_externe"
+                                   placeholder="Ex: 2024_001 (MarocAnnonce / SharePoint)"/>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Informations générales">
+                            <field name="secteur_activite"
+                                   placeholder="Ex: Finance, Industrie, IT..."/>
+                            <field name="type_contrat"/>
+                            <field name="localisation"/>
+                            <field name="experience_min"/>
+                            <field name="niveau_formation"/>
+                        </group>
+                        <group string="Paramètres shortlisting">
+                            <field name="nb_shortlist"
+                                   help="Nombre de candidats à shortlister automatiquement (Top N)"/>
+                            <field name="candidat_count" string="Candidats reçus"/>
+                            <field name="job_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- Description -->
+                        <page string="Description du poste">
+                            <field name="description"
+                                   placeholder="Décrivez le contexte, les missions, l'environnement de travail..."/>
+                        </page>
+
+                        <!-- Profil -->
+                        <page string="Profil recherché">
+                            <field name="profil_recherche"
+                                   placeholder="Décrivez le candidat idéal, ses qualités, sa personnalité..."/>
+                        </page>
+
+                        <!-- Compétences -->
+                        <page string="Compétences">
+                            <group>
+                                <field name="competences_requises"
+                                       string="Compétences requises"
+                                       placeholder="Python, Odoo, SQL, Machine Learning..."/>
+                                <field name="competences_bonus"
+                                       string="Compétences bonus"
+                                       placeholder="Docker, Kubernetes, AWS..."/>
+                            </group>
+                        </page>
+
+                        <!-- Critères non-négociables -->
+                        <page string="Critères non-négociables">
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Attention !</strong> Si un candidat ne remplit pas
+                                un seul critère non-négociable, il sera automatiquement
+                                <strong>rejeté</strong> par le système IA.
+                            </div>
+                            <group> 
+                                <field name="criteres_obligatoires"
+                                       string="Critères non-négociables (max 5)"
+                                       placeholder="Ex: Bac+5 obligatoire&#10;Permis B obligatoire&#10;Disponibilité immédiate&#10;3 ans expérience minimum&#10;Maîtrise Excel avancée"
+                                       help="Un critère par ligne — max 5 critères — absence = rejet automatique"/>
+                            </group>
+                            <group string="Autres critères d'évaluation">
+                                <field name="criteres_autres"
+                                       placeholder="Ex: Connaissance du secteur bancaire&#10;Expérience en management&#10;Anglais professionnel"
+                                       help="Critères importants mais non éliminatoires"/>
+                            </group>
+                        </page>
+
+                        <!-- ONGLET : Scoring & Automatisation -->
+                        <page string="Scoring &amp; Automatisation">
+                            <group>
+                                <group string="Pondérations Personnalisées (Total = 100 points)">
+                                    <field name="poids_competences" string="Compétences"/>
+                                    <field name="poids_experience" string="Expérience"/>
+                                    <field name="poids_formation" string="Formation"/>
+                                    <field name="poids_geo" string="Géolocalisation"/>
+                                    <field name="poids_gemini" string="Analyse Gemini"/>
+                                    <separator string="Total doit = 100 points"/>
+                                </group>
+                                
+                                <group string="Seuils de Décision Automatique">
+                                    <field name="seuil_shortlist" 
+                                           string="Seuil Shortlist (>= X/100)"
+                                           decoration-success="seuil_shortlist >= 70"/>
+                                    <field name="seuil_rejet" 
+                                           string="Seuil Rejet (&lt; X/100)"
+                                           decoration-danger="seuil_rejet &lt; 50"/>
+                                </group>
+                            </group>
+
+                            <group>
+                                <div class="alert alert-info" role="alert">
+                                    <h5>Fonctionnement de l'automatisation :</h5>
+                                    <ul>
+                                        <li>Score >= <field name="seuil_shortlist" readonly="1" nolabel="1" class="fw-bold"/> → <strong>Shortlist automatique</strong></li>
+                                        <li>Score &lt; <field name="seuil_rejet" readonly="1" nolabel="1" class="fw-bold"/> → <strong>Rejet automatique</strong></li>
+                                        <li>Entre les deux → Reste en <strong>"Analysé"</strong> pour décision manuelle</li>
+                                    </ul>
+                                </div>
+                            </group>
+
+                            <group>
+                                <group string="Exemples de Pondérations par Type de Poste">
+                                    <div class="o_group">
+                                        <p class="text-muted">
+                                            <strong>Valeurs par défaut (équilibrées) :</strong><br/>
+                                            Compétences: 20 | Expérience: 30 | Formation: 20 | Géo: 10 | Gemini: 20
+                                        </p>
+                                        <hr/>
+                                        <p class="text-muted">
+                                            <strong>Poste Technique (Développeur) :</strong><br/>
+                                            Compétences: 30 | Expérience: 25 | Formation: 15 | Géo: 10 | Gemini: 20
+                                        </p>
+                                        <p class="text-muted">
+                                            <strong>Poste Junior (Débutant) :</strong><br/>
+                                            Compétences: 20 | Expérience: 15 | Formation: 35 | Géo: 10 | Gemini: 20
+                                        </p>
+                                        <p class="text-muted">
+                                            <strong>Poste Senior (Manager) :</strong><br/>
+                                            Compétences: 15 | Expérience: 40 | Formation: 15 | Géo: 10 | Gemini: 20
+                                        </p>
+                                        <p class="text-muted">
+                                            <strong>Poste Commercial (Proximité importante) :</strong><br/>
+                                            Compétences: 20 | Expérience: 25 | Formation: 15 | Géo: 20 | Gemini: 20
+                                        </p>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Informations RTP -->
+                        <page string="Informations RTP">
+                            <group>
+                                <group string="Informations de l'affaire">
+                                    <field name="affaire_numero"/>
+                                    <field name="client_demandeur"/>
+                                    <field name="motif_recrutement"/>
+                                    <field name="budget_poste"/>
+                                    <field name="date_prevue_demarrage"/>
+                                </group>
+                                <group string="Profil démographique">
+                                    <field name="age_souhaite"/>
+                                    <field name="sexe_souhaite"/>
+                                </group>
+                            </group>
+                            <group string="Détails du poste">
+                                <field name="missions_taches" 
+                                       placeholder="Décrivez les missions et tâches principales..."/>
+                                <field name="qualites_personnelles"
+                                       placeholder="Ex: Autonomie, esprit d'équipe, rigueur..."/>
+                                <field name="connaissances_specifiques"
+                                       placeholder="Ex: SAP, AutoCAD, certification PMP..."/>
+                                <field name="autres_avantages"
+                                       placeholder="Ex: Mutuelle, primes, tickets restaurant..."/>
+                            </group>
+                        </page>
+
+                        <!-- Candidats -->
+                        <page string="Candidats">
+                            <field name="candidat_ids">
+                                <list decoration-success="state=='shortlisted'"
+                                      decoration-danger="state=='rejected'"
+                                      decoration-info="state=='analyzed'"
+                                      default_order="ai_score desc">
+                                    <field name="ai_rank" string="#"/>
+                                    <field name="name" string="Candidat"/>
+                                    <field name="experience_display" string="Expérience"/>
+                                    <field name="formation_detail" string="Formation"
+                                           optional="show"/>
+                                    <field name="score_python" string="/80"
+                                        optional="show"/>
+                                    <field name="score_gemini" string="/20"
+                                        optional="show"/>
+                                    <field name="score_display" string="Score"/>
+                                    <field name="recommandation_ia" string="IA"
+                                           decoration-success="recommandation_ia=='SHORTLIST'"
+                                           decoration-warning="recommandation_ia=='ENTRETIEN'"
+                                           decoration-danger="recommandation_ia=='REJETER'"/>
+                                    <field name="shortlisted" widget="boolean_toggle"
+                                           string="Shortlisté"/>
+                                    <field name="state" string="Statut"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- VUE RECHERCHE OFFRES -->
+    <record id="view_smart_offre_search" model="ir.ui.view">
+        <field name="name">smart.offre.search</field>
+        <field name="model">smart.offre</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Titre du poste"/>
+                <field name="reference_externe" string="ID Offre"/>
+                <field name="secteur_activite" string="Secteur"/>
+                <field name="localisation" string="Ville"/>
+
+                <filter name="open" string="Offres ouvertes"
+                        domain="[('state','=','open')]"/>
+                <filter name="closed" string="Offres fermées"
+                        domain="[('state','=','closed')]"/>
+
+                <separator/>
+
+                <filter name="cdi" string="CDI"
+                        domain="[('type_contrat','=','cdi')]"/>
+                <filter name="cdd" string="CDD"
+                        domain="[('type_contrat','=','cdd')]"/>
+                <filter name="stage" string="Stage"
+                        domain="[('type_contrat','=','stage')]"/>
+
+                <group expand="1" string="Grouper par">
+                    <filter name="group_secteur" string="Secteur d'activité"
+                            context="{'group_by': 'secteur_activite'}"/>
+                    <filter name="group_contrat" string="Type de contrat"
+                            context="{'group_by': 'type_contrat'}"/>
+                    <filter name="group_state" string="Statut"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_smart_offre" model="ir.actions.act_window">
+        <field name="name">Offres d'emploi IA</field>
+        <field name="res_model">smart.offre</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_smart_offre_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre première offre d'emploi
+            </p>
+            <p>
+                Configurez les pondérations et seuils de scoring pour chaque poste.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,558 @@
+<?xml version="1.0"?>
+<odoo><data noupdate="1">
+
+    <!-- 1. Accusé de réception de candidature -->
+    <record id="email_template_data_applicant_acknowledgment_fr" model="mail.template">
+        <field name="name">Softy Recrutement: Accusé de réception de candidature</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Confirmation de réception de votre candidature – {{ object.job_id.name }}</field>
+        <field name="email_to">{{ (not object.partner_id and object.email_from or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id or '' }}</field>
+        <field name="description">Accusé de réception automatique de candidature</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <div style="text-align: center; padding: 40px 0 30px 0; border-bottom: 1px solid #e8e8e8;">
+        <h1 style="color: #2c3e50; font-size: 24px; font-weight: 300; margin: 0; letter-spacing: 1px;">
+            ACCUSÉ DE RÉCEPTION
+        </h1>
+        <div style="color: #7f8c8d; font-size: 14px; margin-top: 8px; font-weight: 300;">
+            Candidature reçue avec succès
+        </div>
+    </div>
+    
+    <div style="padding: 40px 30px; line-height: 1.6;">
+        <p style="color: #2c3e50; font-size: 16px; margin: 0 0 20px 0;">
+            Bonjour <t t-if="object.partner_name"><strong><t t-out="object.partner_name"/></strong></t><t t-else="">Madame, Monsieur</t>,
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 25px 0;">
+            Nous vous remercions pour l'intérêt que vous portez à 
+            <strong><t t-out="object.company_id.name or 'notre entreprise'"/></strong> 
+            et pour votre candidature au poste de <strong><t t-out="object.job_id.name or ''"/></strong>.
+        </p>
+        
+        <div style="background-color: #f8f9fa; border-left: 3px solid #95a5a6; padding: 20px; margin: 30px 0;">
+            <p style="color: #34495e; font-size: 15px; margin: 0;">
+                Votre dossier a bien été reçu et sera étudié avec attention par notre équipe recrutement. 
+                Nous reviendrons vers vous dans les plus brefs délais si votre profil correspond aux attentes du poste.
+            </p>
+        </div>
+
+        <div t-if="'website_url' in object.job_id and object.job_id.website_url" style="text-align: center; margin: 30px 0;">
+            <a t-att-href="object.job_id.website_url"
+                style="display: inline-block; background-color: #34495e; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 2px; font-weight: 300; font-size: 14px; letter-spacing: 0.5px;">
+                CONSULTER L'OFFRE
+            </a>
+        </div>
+
+        <p style="color: #2c3e50; font-size: 15px; margin: 40px 0 0 0;">
+            Bien cordialement,
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e8e8e8;">
+        <div style="color: #7f8c8d; font-size: 13px; line-height: 1.5;">
+            <t t-if="object.user_id">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.user_id.name or ''">Responsable RH</t>
+                </div>
+                <div><t t-out="object.user_id.email or ''">rh@entreprise.com</t></div>
+                <div t-if="object.user_id.phone"><t t-out="object.user_id.phone or ''"/></div>
+            </t>
+            <t t-else="">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.company_id.name or ''">Notre Entreprise</t>
+                </div>
+                <div>Direction des Ressources Humaines</div>
+            </t>
+        </div>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang or 'fr_FR' }}</field>
+    </record>
+
+    <!-- 2. Convocation à un entretien -->
+    <record id="email_template_data_applicant_interview_invitation_fr" model="mail.template">
+        <field name="name">Softy Recrutement: Convocation à un entretien</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Entretien de recrutement – {{ object.job_id.name }}</field>
+        <field name="email_to">{{ (not object.partner_id and object.email_from or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id or '' }}</field>
+        <field name="description">Invitation à un entretien de recrutement</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <div style="text-align: center; padding: 40px 0 30px 0; border-bottom: 1px solid #e8e8e8;">
+        <h1 style="color: #2c3e50; font-size: 24px; font-weight: 300; margin: 0; letter-spacing: 1px;">
+            INVITATION À UN ENTRETIEN
+        </h1>
+        <div style="color: #7f8c8d; font-size: 14px; margin-top: 8px; font-weight: 300;">
+            Nous souhaitons vous rencontrer
+        </div>
+    </div>
+    
+    <div style="padding: 40px 30px; line-height: 1.6;">
+        <p style="color: #2c3e50; font-size: 16px; margin: 0 0 20px 0;">
+            Bonjour <t t-if="object.partner_name"><strong><t t-out="object.partner_name"/></strong></t><t t-else="">Madame, Monsieur</t>,
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 30px 0;">
+            À la suite de l'analyse de votre candidature, nous souhaiterions vous rencontrer pour un entretien 
+            relatif au poste de <strong><t t-out="object.job_id.name or ''"/></strong>.
+        </p>
+        
+        <div style="background-color: #f8f9fa; border: 1px solid #e8e8e8; padding: 25px; margin: 30px 0;">
+            <h3 style="color: #2c3e50; font-size: 16px; font-weight: 500; margin: 0 0 20px 0; letter-spacing: 0.5px;">
+                DÉTAILS DE L'ENTRETIEN
+            </h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="color: #7f8c8d; font-size: 14px; font-weight: 500; padding: 8px 0; width: 80px;">Date</td>
+                    <td style="color: #34495e; font-size: 14px; padding: 8px 0;">[À compléter - Jour, Date]</td>
+                </tr>
+                <tr>
+                    <td style="color: #7f8c8d; font-size: 14px; font-weight: 500; padding: 8px 0;">Heure</td>
+                    <td style="color: #34495e; font-size: 14px; padding: 8px 0;">[À compléter - Heure précise]</td>
+                </tr>
+                <tr>
+                    <td style="color: #7f8c8d; font-size: 14px; font-weight: 500; padding: 8px 0; vertical-align: top;">Lieu</td>
+                    <td style="color: #34495e; font-size: 14px; padding: 8px 0;">
+                        <t t-if="object.job_id.address_id">
+                            <t t-out="object.job_id.address_id.contact_address or '[À compléter]'"/>
+                        </t>
+                        <t t-else="">[À compléter / Lien de vidéoconférence]</t>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background-color: #34495e; color: #ffffff; padding: 20px; margin: 30px 0; text-align: center;">
+            <p style="margin: 0; font-size: 15px; font-weight: 300;">
+                Merci de bien vouloir nous confirmer votre disponibilité par retour de mail.
+            </p>
+        </div>
+
+        <t t-if="object.user_id">
+            <div style="border-top: 1px solid #e8e8e8; padding-top: 25px; margin-top: 30px;">
+                <p style="color: #7f8c8d; font-size: 14px; margin: 0 0 10px 0;">Vous serez reçu(e) par :</p>
+                <p style="color: #2c3e50; font-size: 15px; font-weight: 500; margin: 0;">
+                    <t t-out="object.user_id.name or ''">Responsable RH</t>
+                </p>
+                <p style="color: #7f8c8d; font-size: 14px; margin: 5px 0 0 0;">
+                    <t t-out="object.user_id.email or ''">rh@entreprise.com</t>
+                    <span t-if="object.user_id.phone"> • <t t-out="object.user_id.phone or ''"/></span>
+                </p>
+            </div>
+        </t>
+
+        <p style="color: #2c3e50; font-size: 15px; margin: 40px 0 0 0;">
+            Cordialement,
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e8e8e8;">
+        <div style="color: #7f8c8d; font-size: 13px; line-height: 1.5;">
+            <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                <t t-out="object.company_id.name or 'Notre Entreprise'"/>
+            </div>
+            <div>Direction des Ressources Humaines</div>
+        </div>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang or 'fr_FR' }}</field>
+    </record>
+
+    <!-- 3. Relance après absence de réponse -->
+    <record id="email_template_data_applicant_follow_up_fr" model="mail.template">
+        <field name="name">Softy Recrutement: Relance après absence de réponse</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Relance – Entretien pour le poste de {{ object.job_id.name }}</field>
+        <field name="email_to">{{ (not object.partner_id and object.email_from or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id or '' }}</field>
+        <field name="description">Relance candidat après absence de réponse</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <div style="text-align: center; padding: 40px 0 30px 0; border-bottom: 1px solid #e8e8e8;">
+        <h1 style="color: #2c3e50; font-size: 24px; font-weight: 300; margin: 0; letter-spacing: 1px;">
+            RELANCE
+        </h1>
+        <div style="color: #7f8c8d; font-size: 14px; margin-top: 8px; font-weight: 300;">
+            Confirmation de disponibilité
+        </div>
+    </div>
+    
+    <div style="padding: 40px 30px; line-height: 1.6;">
+        <p style="color: #2c3e50; font-size: 16px; margin: 0 0 20px 0;">
+            Bonjour <t t-if="object.partner_name"><strong><t t-out="object.partner_name"/></strong></t><t t-else="">Madame, Monsieur</t>,
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 25px 0;">
+            Nous revenons vers vous concernant notre invitation à un entretien pour le poste de 
+            <strong><t t-out="object.job_id.name or ''"/></strong>, restée sans réponse.
+        </p>
+        
+        <div style="background-color: #f8f9fa; border-left: 3px solid #bdc3c7; padding: 25px; margin: 30px 0;">
+            <p style="color: #2c3e50; font-size: 15px; margin: 0; font-weight: 500;">
+                Êtes-vous toujours intéressé(e) par notre offre ou souhaitez-vous nous signaler un éventuel empêchement ?
+            </p>
+        </div>
+
+        <p style="color: #34495e; font-size: 15px; margin: 25px 0;">
+            Nous restons à votre disposition pour toute question ou précision.
+        </p>
+
+        <p style="color: #2c3e50; font-size: 15px; margin: 40px 0 0 0;">
+            Cordialement,
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e8e8e8;">
+        <div style="color: #7f8c8d; font-size: 13px; line-height: 1.5;">
+            <t t-if="object.user_id">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.user_id.name or ''">Responsable RH</t>
+                </div>
+                <div><t t-out="object.user_id.email or ''">rh@entreprise.com</t></div>
+                <div t-if="object.user_id.phone"><t t-out="object.user_id.phone or ''"/></div>
+            </t>
+            <t t-else="">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.company_id.name or 'Notre Entreprise'"/>
+                </div>
+                <div>Direction des Ressources Humaines</div>
+            </t>
+        </div>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang or 'fr_FR' }}</field>
+    </record>
+
+    <!-- 4. Retour après entretien – poursuite du processus -->
+    <record id="email_template_data_applicant_process_continuation_fr" model="mail.template">
+        <field name="name">Softy Recrutement: Poursuite du processus</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Suite à notre entretien – {{ object.job_id.name }}</field>
+        <field name="email_to">{{ (not object.partner_id and object.email_from or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id or '' }}</field>
+        <field name="description">Notification de poursuite du processus de recrutement</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <div style="text-align: center; padding: 40px 0 30px 0; border-bottom: 1px solid #e8e8e8;">
+        <h1 style="color: #2c3e50; font-size: 24px; font-weight: 300; margin: 0; letter-spacing: 1px;">
+            SUITE FAVORABLE
+        </h1>
+        <div style="color: #7f8c8d; font-size: 14px; margin-top: 8px; font-weight: 300;">
+            Votre candidature progresse
+        </div>
+    </div>
+    
+    <div style="padding: 40px 30px; line-height: 1.6;">
+        <p style="color: #2c3e50; font-size: 16px; margin: 0 0 20px 0;">
+            Bonjour <t t-if="object.partner_name"><strong><t t-out="object.partner_name"/></strong></t><t t-else="">Madame, Monsieur</t>,
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 25px 0;">
+            Suite à l'entretien que nous avons eu récemment, votre profil a retenu notre attention.
+        </p>
+        
+        <div style="background-color: #2c3e50; color: #ffffff; padding: 25px; margin: 30px 0; text-align: center;">
+            <p style="margin: 0; font-size: 16px; font-weight: 300; letter-spacing: 0.5px;">
+                VOUS POURSUIVEZ LE PROCESSUS DE RECRUTEMENT
+            </p>
+        </div>
+
+        <p style="color: #34495e; font-size: 15px; margin: 25px 0;">
+            La prochaine étape consistera en <strong>[ex. un test technique / un second entretien / une visite des locaux / un entretien avec le manager]</strong>.
+        </p>
+
+        <p style="color: #34495e; font-size: 15px; margin: 25px 0;">
+            Nous vous recontacterons rapidement pour organiser cette suite.
+        </p>
+
+        <div style="border-top: 1px solid #e8e8e8; margin: 40px 0 30px 0;"></div>
+
+        <p style="color: #2c3e50; font-size: 15px; margin: 0;">
+            Bien cordialement,
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e8e8e8;">
+        <div style="color: #7f8c8d; font-size: 13px; line-height: 1.5;">
+            <t t-if="object.user_id">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.user_id.name or ''">Responsable RH</t>
+                </div>
+                <div><t t-out="object.user_id.email or ''">rh@entreprise.com</t></div>
+                <div t-if="object.user_id.phone"><t t-out="object.user_id.phone or ''"/></div>
+            </t>
+            <t t-else="">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.company_id.name or 'Notre Entreprise'"/>
+                </div>
+                <div>Direction des Ressources Humaines</div>
+            </t>
+        </div>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang or 'fr_FR' }}</field>
+    </record>
+
+    <!-- 6. Refus après entretien -->
+    <record id="email_template_data_applicant_rejection_after_interview_fr" model="mail.template">
+        <field name="name">Softy Recrutement: Refus après entretien</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Retour suite à votre entretien – {{ object.job_id.name }}</field>
+        <field name="email_to">{{ (not object.partner_id and object.email_from or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id or '' }}</field>
+        <field name="description">Refus de candidature après entretien</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <div style="text-align: center; padding: 40px 0 30px 0; border-bottom: 1px solid #e8e8e8;">
+        <h1 style="color: #2c3e50; font-size: 24px; font-weight: 300; margin: 0; letter-spacing: 1px;">
+            RETOUR SUITE À VOTRE ENTRETIEN
+        </h1>
+        <div style="color: #7f8c8d; font-size: 14px; margin-top: 8px; font-weight: 300;">
+            Décision concernant votre candidature
+        </div>
+    </div>
+    
+    <div style="padding: 40px 30px; line-height: 1.6;">
+        <p style="color: #2c3e50; font-size: 16px; margin: 0 0 20px 0;">
+            Bonjour <t t-if="object.partner_name"><strong><t t-out="object.partner_name"/></strong></t><t t-else="">Madame, Monsieur</t>,
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 25px 0;">
+            Nous vous remercions pour le temps que vous avez consacré à notre entretien récent.
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 30px 0;">
+            Malgré la qualité de votre candidature, nous avons décidé de poursuivre avec un autre profil 
+            répondant davantage aux besoins actuels du poste.
+        </p>
+        
+        <div style="background-color: #f8f9fa; border-left: 3px solid #95a5a6; padding: 25px; margin: 30px 0;">
+            <p style="color: #34495e; font-size: 15px; margin: 0;">
+                Votre candidature reste cependant <strong>enregistrée pour de futures opportunités</strong> 
+                qui pourraient mieux correspondre à votre profil.
+            </p>
+        </div>
+
+        <p style="color: #34495e; font-size: 15px; margin: 25px 0;">
+            Nous vous souhaitons pleine réussite dans vos recherches professionnelles.
+        </p>
+
+        <p style="color: #2c3e50; font-size: 15px; margin: 40px 0 0 0;">
+            Bien à vous,
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e8e8e8;">
+        <div style="color: #7f8c8d; font-size: 13px; line-height: 1.5;">
+            <t t-if="object.user_id">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.user_id.name or ''">Responsable RH</t>
+                </div>
+                <div><t t-out="object.user_id.email or ''">rh@entreprise.com</t></div>
+                <div t-if="object.user_id.phone"><t t-out="object.user_id.phone or ''"/></div>
+            </t>
+            <t t-else="">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.company_id.name or 'Notre Entreprise'"/>
+                </div>
+                <div>Direction des Ressources Humaines</div>
+            </t>
+        </div>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang or 'fr_FR' }}</field>
+    </record>
+
+    <!-- 7. Mise en vivier -->
+    <record id="email_template_data_applicant_talent_pool_fr" model="mail.template">
+        <field name="name">Softy Recrutement: Mise en vivier</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Votre candidature – Enregistrement dans notre vivier</field>
+        <field name="email_to">{{ (not object.partner_id and object.email_from or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id or '' }}</field>
+        <field name="description">Ajout du candidat au vivier de talents</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <div style="text-align: center; padding: 40px 0 30px 0; border-bottom: 1px solid #e8e8e8;">
+        <h1 style="color: #2c3e50; font-size: 24px; font-weight: 300; margin: 0; letter-spacing: 1px;">
+            TALENT IDENTIFIÉ
+        </h1>
+        <div style="color: #7f8c8d; font-size: 14px; margin-top: 8px; font-weight: 300;">
+            Intégration au vivier de talents
+        </div>
+    </div>
+    
+    <div style="padding: 40px 30px; line-height: 1.6;">
+        <p style="color: #2c3e50; font-size: 16px; margin: 0 0 20px 0;">
+            Bonjour <t t-if="object.partner_name"><strong><t t-out="object.partner_name"/></strong></t><t t-else="">Madame, Monsieur</t>,
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 25px 0;">
+            Bien que votre candidature n'ait pas été retenue pour le poste de 
+            <strong><t t-out="object.job_id.name or ''"/></strong>, nous avons été impressionnés par la richesse de votre parcours.
+        </p>
+        
+        <div style="background-color: #34495e; color: #ffffff; padding: 25px; margin: 30px 0; text-align: center;">
+            <p style="margin: 0; font-size: 15px; font-weight: 300; letter-spacing: 0.5px;">
+                CONSERVATION DE VOTRE DOSSIER DANS NOTRE VIVIER DE TALENTS
+            </p>
+        </div>
+
+        <p style="color: #34495e; font-size: 15px; margin: 25px 0;">
+            Nous vous recontacterons si un poste correspondant à votre profil se présente.
+        </p>
+
+        <div style="border-top: 1px solid #e8e8e8; margin: 40px 0 30px 0;"></div>
+
+        <p style="color: #2c3e50; font-size: 15px; margin: 0;">
+            Cordialement,
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e8e8e8;">
+        <div style="color: #7f8c8d; font-size: 13px; line-height: 1.5;">
+            <t t-if="object.user_id">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.user_id.name or ''">Responsable RH</t>
+                </div>
+                <div><t t-out="object.user_id.email or ''">rh@entreprise.com</t></div>
+                <div t-if="object.user_id.phone"><t t-out="object.user_id.phone or ''"/></div>
+            </t>
+            <t t-else="">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.company_id.name or 'Notre Entreprise'"/>
+                </div>
+                <div>Direction des Ressources Humaines</div>
+            </t>
+        </div>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang or 'fr_FR' }}</field>
+    </record>
+
+    <!-- 8. Proposition d'embauche officielle -->
+    <record id="email_template_data_applicant_job_offer_fr" model="mail.template">
+        <field name="name">Softy Recrutement: Proposition d'embauche officielle</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Offre d'emploi – Confirmation et documents à fournir</field>
+        <field name="email_to">{{ (not object.partner_id and object.email_from or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id or '' }}</field>
+        <field name="description">Proposition d'embauche officielle</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <div style="text-align: center; padding: 40px 0 30px 0; border-bottom: 1px solid #e8e8e8;">
+        <h1 style="color: #2c3e50; font-size: 24px; font-weight: 300; margin: 0; letter-spacing: 1px;">
+            OFFRE D'EMPLOI
+        </h1>
+        <div style="color: #7f8c8d; font-size: 14px; margin-top: 8px; font-weight: 300;">
+            Félicitations, vous avez été sélectionné(e)
+        </div>
+    </div>
+    
+    <div style="padding: 40px 30px; line-height: 1.6;">
+        <p style="color: #2c3e50; font-size: 16px; margin: 0 0 20px 0;">
+            Bonjour <t t-if="object.partner_name"><strong><t t-out="object.partner_name"/></strong></t><t t-else="">Madame, Monsieur</t>,
+        </p>
+        
+        <p style="color: #34495e; font-size: 15px; margin: 0 0 30px 0;">
+            Nous avons le plaisir de vous informer que vous avez été retenu(e) pour le poste de 
+            <strong><t t-out="object.job_id.name or ''"/></strong> au sein de <strong><t t-out="object.company_id.name or ''"/></strong>.
+        </p>
+        
+        <div style="background-color: #f8f9fa; border: 1px solid #e8e8e8; padding: 25px; margin: 30px 0;">
+            <h3 style="color: #2c3e50; font-size: 16px; font-weight: 500; margin: 0 0 20px 0; letter-spacing: 0.5px;">
+                DÉTAILS DE L'OFFRE
+            </h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="color: #7f8c8d; font-size: 14px; font-weight: 500; padding: 8px 0; width: 120px;">Rémunération</td>
+                    <td style="color: #34495e; font-size: 14px; padding: 8px 0;">[Montant à préciser]</td>
+                </tr>
+                <tr>
+                    <td style="color: #7f8c8d; font-size: 14px; font-weight: 500; padding: 8px 0;">Prise de poste</td>
+                    <td style="color: #34495e; font-size: 14px; padding: 8px 0;">[Date de début à préciser]</td>
+                </tr>
+                <tr>
+                    <td style="color: #7f8c8d; font-size: 14px; font-weight: 500; padding: 8px 0; vertical-align: top;">Lieu de travail</td>
+                    <td style="color: #34495e; font-size: 14px; padding: 8px 0;">
+                        <t t-if="object.job_id.address_id">
+                            <t t-out="object.job_id.address_id.contact_address or '[À préciser]'"/>
+                        </t>
+                        <t t-else="">[À préciser]</t>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="border-top: 1px solid #e8e8e8; padding-top: 30px; margin-top: 40px;">
+            <h3 style="color: #2c3e50; font-size: 16px; font-weight: 500; margin: 0 0 20px 0; letter-spacing: 0.5px;">
+                DOCUMENTS À FOURNIR
+            </h3>
+            <p style="color: #34495e; font-size: 15px; margin: 0 0 20px 0;">
+                Afin de finaliser votre dossier administratif, merci de bien vouloir transmettre les pièces suivantes <strong>avant votre prise de poste</strong> :
+            </p>
+            
+            <div style="background-color: #f8f9fa; padding: 20px; margin: 20px 0;">
+                <ul style="color: #34495e; font-size: 14px; margin: 0; padding-left: 20px; line-height: 1.8;">
+                    <li>CIN (Carte d'identité nationale)</li>
+                    <li>CV actualisé</li>
+                    <li>Diplômes et certifications</li>
+                    <li>Autres documents selon les exigences du poste</li>
+                </ul>
+            </div>
+        </div>
+
+        <p style="color: #34495e; font-size: 15px; margin: 30px 0;">
+            N'hésitez pas à revenir vers nous pour toute question ou précision concernant cette offre.
+        </p>
+
+        <div style="background-color: #2c3e50; color: #ffffff; padding: 25px; margin: 40px 0; text-align: center;">
+            <p style="margin: 0; font-size: 15px; font-weight: 300; letter-spacing: 0.5px;">
+                NOUS SOMMES RAVIS DE VOUS COMPTER PROCHAINEMENT PARMI NOS COLLABORATEURS
+            </p>
+        </div>
+
+        <p style="color: #2c3e50; font-size: 15px; margin: 40px 0 0 0;">
+            Bien cordialement,
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e8e8e8;">
+        <div style="color: #7f8c8d; font-size: 13px; line-height: 1.5;">
+            <t t-if="object.user_id">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.user_id.name or ''">Responsable RH</t>
+                </div>
+                <div><t t-out="object.user_id.email or ''">rh@entreprise.com</t></div>
+                <div t-if="object.user_id.phone"><t t-out="object.user_id.phone or ''"/></div>
+            </t>
+            <t t-else="">
+                <div style="font-weight: 500; color: #2c3e50; margin-bottom: 5px;">
+                    <t t-out="object.company_id.name or 'Notre Entreprise'"/>
+                </div>
+                <div>Direction des Ressources Humaines</div>
+            </t>
+        </div>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang or 'fr_FR' }}</field>
+    </record>
+
+</data></odoo>

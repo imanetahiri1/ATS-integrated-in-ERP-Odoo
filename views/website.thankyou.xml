@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="softy_recrutement_thank_you_page" inherit_id="website_hr_recruitment.thank_you" name="Custom Thank You Page">
+
+        <xpath expr="//img[@src='/website_hr_recruitment/static/src/img/job_thank_you.svg']" position="replace">
+
+            <img src="/softy_recrutement/static/src/img/im.png"
+                 class="img img-fluid mx-auto mt-4"
+                 style="max-width: 450px;"
+                 alt="Félicitations !"/>
+
+        </xpath>
+    </template>
+
+</odoo>

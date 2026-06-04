@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Offres IA sous le menu Recrutement existant -->
+    <menuitem id="menu_smart_offres"
+              name="Offres IA"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_smart_offre"
+              sequence="20"/>
+
+    <menuitem id="menu_smart_candidats"
+              name="Candidats IA"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_smart_candidat"
+              sequence="21"/>
+</odoo>

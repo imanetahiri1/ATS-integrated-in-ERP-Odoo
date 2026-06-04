@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_candidate_view_form_blacklist" model="ir.ui.view">
+            <field name="name">hr.candidate.form.blacklist</field>
+            <field name="model">hr.candidate</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_candidate_view_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="blacklisted" invisible="1"/>
+                    <field name="motif_blackliste" invisible="1"/>
+                    <field name="has_multiple_applications" invisible="1"/>
+                    <field name="has_accepted_application" invisible="1"/>
+                </field>
+                
+                <widget name="web_ribbon" position="after">
+                    <widget name="web_ribbon" title="Blacklisté" bg_color="text-bg-danger" invisible="not blacklisted"/>
+                    <widget name="web_ribbon" title="Multiple Applications" bg_color="text-bg-primary" invisible="not has_multiple_applications"/>
+                    <widget name="web_ribbon" title="Accepted" bg_color="text-bg-success" invisible="not has_accepted_application"/>
+                </widget>
+                
+                <field name="candidate_properties" position="after">
+                    <group string="Blackliste" colspan="2">
+                        <field name="blacklisted" string="Candidat Blacklisté"/>
+                        <field name="motif_blackliste" invisible="not blacklisted" placeholder="Raison du blacklistage..."/>
+                    </group>
+                    
+                    <group string="Informations Complémentaires" colspan="2" name="additional_info_group">
+                        <field name="address_domicile"/>
+                        <field name="etab"/>
+                        <field name="date_opt"/>
+                    </group>
+
+                </field>
+            </field>
+        </record>
+        <record id="hr_candidate_view_form_stats" model="ir.ui.view">
+            <field name="name">hr.candidate.form.stats</field>
+            <field name="model">hr.candidate</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_candidate_view_form"/>
+            <field name="arch" type="xml">
+                
+                <notebook position="inside">
+                    <page name="application_stats" string="Application History">
+                        <group>
+                            <group string="Application Counts">
+                                <field name="applications_count" readonly="1"/>
+                                <field name="accepted_applications_count" readonly="1"/>
+                                <field name="refused_applications_count" readonly="1"/>
+                            </group>
+                            <group string="Overall Evaluation">
+                                <field name="priority" readonly="1" widget="priority"/>
+                                <field name="application_count" readonly="1" invisible="1"/> 
+                            </group>
+                        </group>
+                        
+                        <div name="buttons_view_applications">
+                            <button name="action_open_applications" type="object" string="View All Applications" class="oe_highlight"/>
+                        </div>
+                    </page>
+                </notebook>
+
+                </field>
+        </record>
+        
+        <record id="hr_candidate_view_list_blacklist" model="ir.ui.view">
+            <field name="name">hr.candidate.list.blacklist</field>
+            <field name="model">hr.candidate</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_candidate_view_tree"/>
+            <field name="arch" type="xml">
+                <field name="priority" position="after">
+                    <field name="blacklisted" widget="boolean_toggle" optional="show" string="Blacklisté"/>
+                    <field name="motif_blackliste" optional="hide" string="Motif Blackliste"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="hr_candidate_view_kanban_blacklist" model="ir.ui.view">
+            <field name="name">hr.candidate.kanban.blacklist</field>
+            <field name="model">hr.candidate</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_candidate_view_kanban"/>
+            <field name="arch" type="xml">
+                <field name="color" position="after">
+                    <field name="blacklisted"/>
+                </field>
+                
+                <field name="categ_ids" position="after">
+                    <div t-if="record.blacklisted.raw_value" class="badge text-bg-danger">
+                        <i class="fa fa-ban"/> Blacklisté
+                    </div>
+                </field>
+            </field>
+        </record>
+
+    <record id="hr_candidate_view_kanban_blacklist" model="ir.ui.view">
+        <field name="name">hr.candidate.kanban.blacklist</field>
+        <field name="model">hr.candidate</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_candidate_view_kanban"/>
+        <field name="arch" type="xml">
+            <field name="color" position="after">
+                <field name="blacklisted"/>
+                <field name="has_multiple_applications"/>
+                <field name="has_accepted_application"/>
+            </field>
+            
+            <field name="categ_ids" position="after">
+                <div t-if="record.blacklisted.raw_value" class="badge text-bg-danger">
+                    <i class="fa fa-ban"/> Blacklisté
+                </div>
+                <div t-if="record.has_multiple_applications.raw_value" class="badge text-bg-primary">
+                    <i class="fa fa-files-o"/> Récurrent(e)
+                </div>
+                <div t-if="record.has_accepted_application.raw_value" class="badge text-bg-success">
+                    <i class="fa fa-check-circle"/> Candidature Acceptée
+                </div>
+            </field>
+        </field>
+    </record>
+    </data>
+</odoo>

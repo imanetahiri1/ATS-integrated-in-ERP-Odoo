@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ 
+    <!-- Vue formulaire du wizard -->
+    <record id="view_import_batch_cv_wizard_form" model="ir.ui.view">
+        <field name="name">smart.import.batch.cv.wizard.form</field>
+        <field name="model">smart.import.batch.cv.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importer plusieurs CVs">
+                <group>
+                    <field name="offre_id" invisible="1"/>
+                    
+                    <group string="Selection des CVs">
+                        <field name="cv_files" widget="many2many_binary" nolabel="1"/>
+                        <p class="text-muted">
+                            Formats acceptes : PDF, DOCX, JPG, PNG<br/>
+                            Vous pouvez selectionner plusieurs fichiers a la fois.
+                        </p>
+                    </group>
+                    
+                    <group string="Options de scoring">
+                        <field name="auto_score"/>
+                        <field name="use_2_pass_scoring" 
+                               invisible="not auto_score"/>
+                    </group>
+                    
+                    <div class="alert alert-info" role="alert" invisible="not auto_score">
+                        <strong>INFO</strong><br/>
+                        Le scoring 2-passes est recommande pour economiser les appels API Gemini.
+                        <ul>
+                            <li>Pass 1 : Tous les CVs scores avec Python (rapide)</li>
+                            <li>Pass 2 : Top 20% scores avec Gemini (IA)</li>
+                        </ul>
+                    </div>
+                </group>
+                
+                <footer>
+                    <button name="action_import_cvs" 
+                            string="Lancer l'import" 
+                            type="object" 
+                            class="btn-primary"/>
+                    <button string="Annuler" 
+                            class="btn-secondary" 
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+ 
+    <!-- Action pour ouvrir le wizard (VERSION CORRIGEE ODOO 18) -->
+    <record id="action_import_batch_cv_wizard" model="ir.actions.act_window">
+        <field name="name">Importer plusieurs CVs</field>
+        <field name="res_model">smart.import.batch.cv.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+ 
+</odoo>

@@ -1,0 +1,4 @@
+/* Hide the HR Recruiter contact box on the job application thank you page */
+#jobs_thankyou .row > div.col-lg-4.align-self-center.ps-4 {
+    display: none !important;
+}

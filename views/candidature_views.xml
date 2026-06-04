@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_applicant_view_form_add_list_button" model="ir.ui.view">
+            <field name="name">hr.applicant.form.add.list.button</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='archive_applicant']" position="after">
+                    <button string="Ajouter à Liste" 
+                            type="object" 
+                            name="action_add_to_list"
+                            class="btn-success"
+                            data-hotkey="l"
+                            invisible="not active"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_applicant_kanban_blacklist" model="ir.ui.view">
+            <field name="name">hr.applicant.kanban.blacklist</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+            <field name="arch" type="xml">
+                <xpath expr="//widget[@name='web_ribbon'][last()]" position="after">
+                    <widget name="web_ribbon" title="BLACKLISTÉ" bg_color="text-bg-danger" 
+                            invisible="not is_candidate_blacklisted"/>
+                    <widget name="web_ribbon" title="Récurrent" bg_color="text-bg-primary" 
+                            invisible="not has_multiple_applications"/>
+                    <widget name="web_ribbon" title="Acceptée" bg_color="text-bg-success" 
+                            invisible="not has_accepted_application"/>
+                </xpath>
+                
+                <xpath expr="//field[@name='application_status']" position="after">
+                    <field name="is_candidate_blacklisted"/>
+                    <field name="has_multiple_applications"/>
+                    <field name="has_accepted_application"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="hr_applicant_view_form_historique_scorecard" model="ir.ui.view">
+            <field name="name">hr.applicant.form.historique.scorecard</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    
+                    <page string="Historique des Étapes" name="historique_page">
+                        <field name="historique_ids" context="{'default_applicant_id': id}">
+                            <list string="Historique des Étapes" editable="bottom">
+                                <field name="date"/>
+                                <field name="nom_etape"/>
+                                <field name="evaluator"/>
+                                <field name="notes"/>
+                            </list>
+                            
+                            <form string="Étape de Recrutement">
+                                <sheet>
+                                    <group>
+                                        <field name="nom_etape"/>
+                                        <field name="date"/>
+                                        <field name="evaluator"/>
+                                        <field name="notes"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+
+                    <page string="Entretien téléphonique" name="phone_screening_page">
+                        <field name="phone_screening_ids" context="{'default_applicant_id': id, 'default_candidate_name': partner_name, 'default_position': job_id}">
+                            <list string="Screening Téléphonique">
+                                <field name="call_date"/>
+                                <field name="evaluator"/>
+                                <field name="current_situation"/>
+                                <field name="availability"/>
+                                <field name="interview_proposal" widget="boolean_toggle"/>
+                            </list>
+                            
+                            <form string="Screening Téléphonique">
+                                <sheet class="bg-light">
+                                    <div class="oe_title text-center" style="max-width: 800px; margin: 0 auto 40px; padding: 30px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                                        <h1 style="margin: 0 0 10px 0; font-weight: 300; color: #333;">
+                                            <field name="candidate_name" placeholder="Nom du candidat..." style="text-align: center; font-size: 24px; border: none; border-bottom: 1px solid #eee; width: 70%; margin: 0 auto; padding-bottom: 8px;"/>
+                                        </h1>
+                                        <h3 style="margin: 0; font-weight: 300; color: #777;">
+                                            <field name="position" placeholder="Poste..." style="text-align: center; font-size: 18px; border: none; width: 60%; margin: 0 auto;"/>
+                                        </h3>
+                                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px;">
+                                            <div style="font-size: 14px; color: #777;">
+                                                <strong>Date d'appel:</strong> <field name="call_date"/>
+                                            </div>
+                                            <div style="font-size: 14px; color: #777;">
+                                                <strong>Évaluateur:</strong> <field name="evaluator"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="max-width: 800px; margin: 0 auto;">
+                                        <h2 style="text-align: center; font-weight: 300; color: #444; margin-bottom: 30px;">Informations Screening</h2>
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
+                                            <group string="Expérience Professionnelle" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="last_position" placeholder="Dernier poste occupé..."/>
+                                                <field name="total_experience" placeholder="Nombre d'années..."/>
+                                            </group>
+                                            
+                                            <group string="Situation et Localisation" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="location" placeholder="Ville, région..."/>
+                                                <field name="current_situation"/>
+                                            </group>
+                                            
+                                            <group string="Disponibilité et Mobilité" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="availability"/>
+                                                <field name="availability_details" placeholder="Précisions..."/>
+                                                <field name="mobility" placeholder="Capacité de déplacement..."/>
+                                            </group>
+                                            
+                                            <group string="Rémunération" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="current_salary" placeholder="Salaire actuel..."/>
+                                                <field name="salary_expectations" placeholder="Prétentions..."/>
+                                            </group>
+                                            
+                                            <group string="Motivation" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="motivation_change" placeholder="Raisons du changement..."/>
+                                            </group>
+                                            
+                                            <group string="Informations Personnelles" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="marital_status"/>
+                                                <field name="number_children"/>
+                                            </group>
+                                            
+                                            <group string="CV et Entretien" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="cv_updated"/>
+                                                <field name="interview_proposal"/>
+                                            </group>
+                                            
+                                            <group string="Commentaires" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="additional_comments" placeholder="Observations supplémentaires..."/>
+                                            </group>
+                                        </div>
+                                    </div>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+
+                    <page string="Scorecard d’évaluation Candidat" name="scorecard_page">
+                        <field name="scorecard_ids" context="{'default_applicant_id': id, 'default_candidate_name': partner_name, 'default_position': job_id}">
+                            <list string="Scorecards">
+                                <field name="evaluation_date"/>
+                                <field name="evaluator"/>
+                                <field name="total_score"/>
+                                <field name="threshold_met" widget="boolean_toggle"/>
+                                <field name="decision" decoration-success="decision == 'selected'" decoration-danger="decision == 'rejected'"/>
+                            </list>
+                            
+                            <form string="Scorecard de Recrutement">
+                                <sheet class="bg-light">
+                                    <div class="oe_title text-center" style="max-width: 800px; margin: 0 auto 40px; padding: 30px; background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                                        <h1 style="margin: 0 0 10px 0; font-weight: 300; color: #333;">
+                                            <field name="candidate_name" placeholder="Nom du candidat..." style="text-align: center; font-size: 24px; border: none; border-bottom: 1px solid #eee; width: 70%; margin: 0 auto; padding-bottom: 8px;"/>
+                                        </h1>
+                                        <h3 style="margin: 0; font-weight: 300; color: #777;">
+                                            <field name="position" placeholder="Poste..." style="text-align: center; font-size: 18px; border: none; width: 60%; margin: 0 auto;"/>
+                                        </h3>
+                                        <div style="margin-top: 25px; display: flex; justify-content: center; gap: 40px;">
+                                            <div style="font-size: 18px; color: #555;">
+                                                <strong>Score:</strong> <field name="total_score" readonly="1" style="font-weight: 500; color: #444;"/> / <field name="max_score" readonly="1"/>
+                                            </div>
+                                            <div style="font-size: 18px; color: #555;">
+                                                <strong>Seuil:</strong> <field name="threshold_met" widget="boolean_toggle" readonly="1" style="color: #666;"/>
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px;">
+                                            <div style="font-size: 14px; color: #777;">
+                                                <field name="evaluation_date"/>
+                                            </div>
+                                            <div style="font-size: 14px; color: #777;">
+                                                <field name="evaluator"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="max-width: 800px; margin: 0 auto;">
+                                        <h2 style="text-align: center; font-weight: 300; color: #444; margin-bottom: 30px;">Critères d'Évaluation</h2>
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
+                                            <group string="1. Présentation du CV (0-1 pt)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="cv_presentation" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="cv_presentation_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="2. Diplôme et qualifications (0-3 pts)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="diploma_level" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="diploma_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="3. Expérience professionnelle (0-2 pts)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="experience_level" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="experience_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="4. Compétences métier (0-3 pts)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="job_skills" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="job_skills_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="5. Soft skills (0-3 pts)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="soft_skills" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="soft_skills_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="6. Maîtrise des langues (0-2 pts)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="language_skills" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="language_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="7. Tranche d'âge (0-1 pt)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="age_range" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="age_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="8. Mobilité/Localisation (0-2 pts)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="mobility" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="mobility_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="9. Motivation et engagement (0-2 pts)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="motivation" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="motivation_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                            
+                                            <group string="10. Prétention Salariale (0-1 pt)" style="margin-bottom: 30px; border-left: 3px solid #aaa; padding-left: 20px;">
+                                                <field name="salary_expectation" widget="radio" style="margin-bottom: 15px;"/>
+                                                <field name="salary_expectation_justification" placeholder="Justification..." style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px;"/>
+                                            </group>
+                                        </div>
+                                    </div>
+
+                                    <div style="max-width: 600px; margin: 40px auto 0; padding: 30px; background: #f8f8f8; border-radius: 8px; text-align: center;">
+                                        <h2 style="margin: 0 0 15px 0; font-weight: 300; color: #444;">Score Final</h2>
+                                        <div style="font-size: 36px; font-weight: 300; margin: 10px 0; color: #555;">
+                                            <field name="total_score" readonly="1"/> / <field name="max_score" readonly="1"/>
+                                        </div>
+                                        <div style="font-size: 16px; color: #777; margin-bottom: 15px;">
+                                            Seuil recommandé (≥10 points): 
+                                            <field name="threshold_met" widget="boolean_toggle" readonly="1" style="color: #666;"/>
+                                        </div>
+                                        <div style="font-size: 18px; margin-top: 20px;">
+                                            <field name="decision" readonly="1" 
+                                                            widget="badge" 
+                                                            decoration-success="decision == 'selected'"
+                                                            decoration-danger="decision == 'rejected'"/>
+                                        </div>
+                                    </div>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_applicant_view_form_add_sourcer" model="ir.ui.view">
+            <field name="name">hr.applicant.form.add.sourcer</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='interviewer_ids']" position="after">
+                    <field name="sourcer" widget="many2one_avatar_user" placeholder="Select sourcer"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="hr_applicant_view_form_add_fields" model="ir.ui.view">
+            <field name="name">hr.applicant.form.add.fields</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_name']" position="after">
+                    <field name="address_domicile" placeholder="e.g. 123 Main St, Anytown"/>
+                    <field name="date_opt"/>
+                    <field name="etab" placeholder="e.g. University of Odoo"/>
+                </xpath>
+            </field>
+        </record>
+        </data>
+</odoo>

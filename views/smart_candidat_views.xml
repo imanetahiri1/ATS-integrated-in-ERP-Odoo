@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- VUE LISTE (TABLE) -->
+    <record id="view_smart_candidat_list" model="ir.ui.view">
+        <field name="name">smart.candidat.list</field>
+        <field name="model">smart.candidat</field>
+        <field name="arch" type="xml">
+            <list string="Candidats"
+                    default_order="ai_score desc, id desc"
+                    decoration-success="state=='shortlisted'"
+                    decoration-danger="state=='rejected'"
+                    decoration-info="state=='analyzed'"
+                    expand="1">
+                <header>
+                    <button name="action_analyser_cv" 
+                            string="Scorer les candidats sélectionnés" 
+                            type="object"
+                            class="btn-primary"/>
+                </header>
+                <field name="ai_rank" string="#" optional="show" width="40"/>
+                <field name="name" string="Candidat"/>
+                <field name="cv_file" 
+                        widget="binary" 
+                        filename="cv_filename" 
+                        string="Télécharger CV" 
+                        optional="show"/>
+                <field name="cv_filename" column_invisible="1"/>
+                <field name="source_ajout" widget="badge"
+                       decoration-success="source_ajout == 'auto'"
+                       decoration-info="source_ajout == 'manuel'"
+                       string="Source" optional="show"/>
+                <field name="email" optional="show"/>
+                <field name="phone" string="Téléphone" optional="show"/>
+                <field name="job_id" string="Offre"/>
+                <field name="experience_display" string="Expérience"/>
+                <field name="formation_detail" string="Formation" optional="show"/>
+                <field name="score_python" string="Score Python /80" optional="show"/>
+                <field name="score_gemini" string="Score Gemini /20" optional="show"/>
+                <field name="score_display" string="Score Final /100"/>
+                <field name="recommandation_ia" string="Recommandation IA"
+                    decoration-success="recommandation_ia=='SHORTLIST'"
+                    decoration-warning="recommandation_ia=='ENTRETIEN'"
+                    decoration-danger="recommandation_ia=='REJETER'"/>
+                <field name="shortlisted" widget="boolean_toggle" string="Shortlisté"/>
+                <field name="state" string="Statut"
+                    decoration-success="state=='shortlisted'"
+                    decoration-danger="state=='rejected'"
+                    decoration-info="state=='analyzed'"
+                    decoration-muted="state=='new'"/>
+                <field name="source" optional="show"/>
+                <button name="action_analyser_cv" 
+                        string="Scorer" 
+                        type="object"
+                        class="btn-sm btn-primary"
+                        invisible="state == 'analyzed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- VUE KANBAN (AVEC TRI PAR SCORE) -->
+    <record id="view_smart_candidat_kanban" model="ir.ui.view">
+        <field name="name">smart.candidat.kanban</field>
+        <field name="model">smart.candidat</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" 
+                    default_order="ai_score desc, id desc"
+                    class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="ai_score"/>
+                <field name="ai_rank"/>
+                <field name="job_id"/>
+                <field name="recommandation_ia"/>
+                <field name="shortlisted"/>
+                <field name="experience_display"/>
+                <field name="formation_detail"/>
+                <field name="score_display"/>
+                <field name="score_python"/>
+                <field name="score_gemini"/>
+                <field name="source_ajout"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click
+                            #{record.state.raw_value == 'shortlisted' ? 'border-success' : ''}
+                            #{record.state.raw_value == 'rejected' ? 'border-danger' : ''}">
+
+                            <!-- En-tête avec avatar et rang -->
+                            <div class="d-flex align-items-center mb-2">
+                                <div t-attf-style="
+                                    width:40px;height:40px;border-radius:50%;
+                                    background:#{record.state.raw_value == 'shortlisted' ? '#198754' :
+                                                record.state.raw_value == 'rejected' ? '#dc3545' :
+                                                record.state.raw_value == 'analyzed' ? '#0d6efd' : '#6c757d'};
+                                    color:white;font-weight:bold;
+                                    display:flex;align-items:center;justify-content:center;
+                                    font-size:14px;flex-shrink:0;">
+                                    <t t-esc="record.name.raw_value.slice(0,2).toUpperCase()"/>
+                                </div>
+                                <div class="ms-2 overflow-hidden">
+                                    <div class="fw-bold text-truncate">
+                                        <t t-esc="record.name.value"/>
+                                    </div>
+                                    <div class="text-muted small text-truncate">
+                                        <t t-esc="record.job_id.value"/>
+                                    </div>
+                                </div>
+                                <div t-if="record.ai_rank.raw_value > 0"
+                                    class="ms-auto badge bg-secondary">
+                                    #<t t-esc="record.ai_rank.value"/>
+                                </div>
+                            </div>
+
+                            <!-- Barre de score -->
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small class="text-muted">Score Final</small>
+                                    <small t-attf-style="
+                                        font-weight:bold;
+                                        color:#{record.ai_score.raw_value >= 70 ? '#198754' :
+                                            record.ai_score.raw_value >= 45 ? '#fd7e14' : '#dc3545'}">
+                                        <t t-esc="record.score_display.value"/>
+                                    </small>
+                                </div>
+                                <div style="background:#e9ecef;border-radius:4px;height:6px;">
+                                    <div t-attf-style="
+                                        width:#{record.ai_score.raw_value}%;
+                                        height:6px;border-radius:4px;
+                                        background:#{record.ai_score.raw_value >= 70 ? '#198754' :
+                                                record.ai_score.raw_value >= 45 ? '#fd7e14' : '#dc3545'}">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">Python: <t t-esc="record.score_python.value"/></small>
+                                    <small class="text-muted">Gemini: <t t-esc="record.score_gemini.value"/></small>
+                                </div>
+                            </div>
+
+                            <!-- Infos candidat -->
+                            <div class="mb-2">
+                                <div t-if="record.experience_display.value" class="small">
+                                    <t t-esc="record.experience_display.value"/>
+                                </div>
+                                <div t-if="record.formation_detail.value" class="small text-truncate">
+                                    <t t-esc="record.formation_detail.value"/>
+                                </div>
+                                <div t-if="record.email.value" class="small text-truncate">
+                                    <t t-esc="record.email.value"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- VUE FORMULAIRE (AVEC APERÇU CV AVANCÉ) -->
+    <record id="view_smart_candidat_form" model="ir.ui.view">
+        <field name="name">smart.candidat.form</field>
+        <field name="model">smart.candidat</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_analyser_cv" 
+                            string="Analyser le CV" 
+                            type="object"
+                            class="btn-primary"
+                            invisible="state == 'analyzed'"/>
+                    <button name="action_shortlist" 
+                            string="Shortlister" 
+                            type="object"
+                            class="btn-success"
+                            invisible="state == 'shortlisted'"/>
+                    <button name="action_reject" 
+                            string="Rejeter" 
+                            type="object"
+                            class="btn-danger"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="new,analyzed,shortlisted,rejected"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_scorer_cv" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-calculator"
+                                invisible="not job_id">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="ai_score" widget="float"/>
+                                </span>
+                                <span class="o_stat_text">Score IA</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du candidat"/>
+                        </h1>
+                        <h3>
+                            <field name="job_id" placeholder="Offre d'emploi"/>
+                        </h3>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="shortlisted" widget="boolean_toggle"/>
+                            <field name="source_ajout" widget="badge"/>
+                            <field name="is_scored"/>
+                        </group>
+                        <group>
+                            <field name="score_display" widget="badge" 
+                                   decoration-success="ai_score >= 70"
+                                   decoration-warning="ai_score >= 50 and ai_score &lt; 70"
+                                   decoration-danger="ai_score &lt; 50"/>
+                            <field name="recommandation_ia" widget="badge"
+                                   decoration-success="recommandation_ia == 'SHORTLIST'"
+                                   decoration-warning="recommandation_ia == 'ENTRETIEN'"
+                                   decoration-danger="recommandation_ia == 'REJETER'"/>
+                        </group>
+                    </group>
+
+                    <!-- LAYOUT 2 COLONNES -->
+                    <div class="row">
+                        <!-- GAUCHE : Informations + Onglets -->
+                        <div class="col-md-8">
+                            <group string="Informations Personnelles">
+                                <group>
+                                    <field name="email"/>
+                                    <field name="phone"/>
+                                    <field name="localisation"/>
+                                    <field name="region"/>
+                                </group>
+                                <group>
+                                    <field name="birth_date"/>
+                                    <field name="gender"/>
+                                    <field name="availability"/>
+                                    <field name="date_disponibilite"/>
+                                </group>
+                            </group>
+
+                            <group string="Profil Professionnel">
+                                <group>
+                                    <field name="current_title"/>
+                                    <field name="sector"/>
+                                    <field name="salary_expectation"/>
+                                </group>
+                                <group>
+                                    <field name="experience_display"/>
+                                    <field name="niveau_formation"/>
+                                    <field name="formation_detail"/>
+                                    <field name="langues"/>
+                                </group>
+                            </group>
+
+                            <group string="Source &amp; Liens">
+                                <field name="rtp_candidate_id" readonly="1"/>
+                            </group>
+
+                            <notebook>
+                                <page string="Texte CV">
+                                    <field name="cv_text" widget="text"/>
+                                    <field name="parse_errors" 
+                                           invisible="not parse_errors"
+                                           widget="text"
+                                           readonly="1"/>
+                                </page>
+                                
+                                <page string="Profil">
+                                    <group>
+                                        <field name="resume_profil" widget="text"/>
+                                        <field name="competences_cv" widget="text"/>
+                                    </group>
+                                </page>
+                                
+                                <page string="Matching" invisible="state == 'new'">
+                                    <group>
+                                        <group string="Score Python (Détail)">
+                                            <field name="score_competences" widget="progressbar"/>
+                                            <field name="score_experience" widget="progressbar"/>
+                                            <field name="score_formation" widget="progressbar"/>
+                                            <field name="score_geo" widget="progressbar"/>
+                                            <separator/>
+                                            <field name="score_python" 
+                                                   widget="float" 
+                                                   decoration-success="score_python >= 60"/>
+                                        </group>
+                                        
+                                        <group string="Score Gemini">
+                                            <field name="score_gemini" 
+                                                   widget="progressbar"/>
+                                        </group>
+                                    </group>
+                                    
+                                    <group>
+                                        <group string="Score Final">
+                                            <field name="ai_score" 
+                                                   widget="float"
+                                                   decoration-success="ai_score >= 70"
+                                                   decoration-warning="ai_score >= 50 and ai_score &lt; 70"
+                                                   decoration-danger="ai_score &lt; 50"/>
+                                            <field name="recommandation_ia" widget="badge"/>
+                                        </group>
+                                    </group>
+                                    
+                                    <group string="Compétences Matchées">
+                                        <field name="competences_matchees" widget="text" nolabel="1"/>
+                                    </group>
+                                    
+                                    <group string="Compétences Manquantes">
+                                        <field name="competences_manquantes" widget="text" nolabel="1"/>
+                                    </group>
+                                    
+                                    <group string="Points Forts">
+                                        <field name="points_forts" widget="text" nolabel="1"/>
+                                    </group>
+                                    
+                                    <group string="Points Faibles">
+                                        <field name="points_faibles" widget="text" nolabel="1"/>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </div>
+
+                        <!-- DROITE : Aperçu CV -->
+                        <div class="col-md-4">
+                            <group string="Curriculum Vitae">
+                                <field name="cv_filename" invisible="1"/>
+                                
+                                <!-- Bouton de téléchargement -->
+                                <field name="cv_file" 
+                                       filename="cv_filename"
+                                       widget="binary"/>
+                            </group>
+                            
+                            <!-- Séparateur -->
+                            <separator string="Aperçu du CV"/>
+                            
+                            <!-- APERÇU PDF -->
+                            <field name="cv_file" 
+                                   filename="cv_filename"
+                                   widget="pdf_viewer"
+                                   options="{'height': 600}"
+                                   invisible="not is_cv_pdf"/>
+                            
+                            <!-- APERÇU IMAGE -->
+                            <field name="cv_file"
+                                   widget="image"
+                                   options="{'size': [0, 600]}"
+                                   invisible="not is_cv_image"/>
+                            
+                            <!-- MESSAGE WORD -->
+                            <div class="alert alert-warning text-center" 
+                                 role="alert"
+                                 style="margin-top: 20px;"
+                                 invisible="not is_cv_docx">
+                                <i class="fa fa-file-word-o fa-3x" style="color: #2b5797; margin-bottom: 10px;"/>
+                                <p style="margin: 10px 0;">
+                                    <strong>Document Word détecté</strong>
+                                </p>
+                                <p style="margin: 0; color: #666; font-size: 0.9em;">
+                                    L'aperçu des fichiers Word n'est pas disponible.<br/>
+                                    Utilisez le bouton de téléchargement ci-dessus.
+                                </p>
+                            </div>
+                            
+                            <!-- MESSAGE SI AUCUN CV -->
+                            <div class="alert alert-info text-center" 
+                                 role="alert"
+                                 style="margin-top: 20px;"
+                                 invisible="cv_filename">
+                                <i class="fa fa-file-o fa-4x" style="color: #999; margin-bottom: 15px;"/>
+                                <p style="margin: 10px 0; color: #666;">
+                                    <strong>Aucun CV attaché</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- VUE RECHERCHE (AMÉLIORÉE) -->
+    <record id="view_smart_candidat_search" model="ir.ui.view">
+        <field name="name">smart.candidat.search</field>
+        <field name="model">smart.candidat</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- RECHERCHE TEXTUELLE AMÉLIORÉE -->
+                <field name="name" string="Recherche globale" 
+                       filter_domain="['|', '|', '|', '|', '|',
+                           ('name', 'ilike', self),
+                           ('email', 'ilike', self),
+                           ('phone', 'ilike', self),
+                           ('cv_text', 'ilike', self),
+                           ('competences_cv', 'ilike', self),
+                           ('formation_detail', 'ilike', self)]"/>
+                
+                <field name="job_id" string="Offre"/>
+                <field name="email"/>
+                <field name="localisation" string="Ville"/>
+                <field name="competences_cv" string="Compétences" 
+                       filter_domain="[('competences_cv', 'ilike', self)]"/>
+                <field name="experience_years" string="Années d'expérience"/>
+                <field name="formation_detail" string="Formation/Diplôme"/>
+
+                <separator/>
+
+                <!-- FILTRES PAR STATUT -->
+                <filter name="shortlisted" string="Shortlistés"
+                        domain="[('shortlisted','=',True)]"/>
+                <filter name="new" string="Nouveaux"
+                        domain="[('state','=','new')]"/>
+                <filter name="analyzed" string="Analysés"
+                        domain="[('state','=','analyzed')]"/>
+                <filter name="rejected" string="Rejetés"
+                        domain="[('state','=','rejected')]"/>
+                <filter name="scored" string="Scorés"
+                        domain="[('is_scored','=',True)]"/>
+
+                <separator/>
+
+                <!-- FILTRES PAR SOURCE -->
+                <filter name="source_ia" string="Ajouté par IA"
+                        domain="[('source_ajout','=','auto')]"/>
+                <filter name="source_manuel" string="Ajouté manuellement"
+                        domain="[('source_ajout','=','manuel')]"/>
+                <filter name="source_import" string="Import en masse"
+                        domain="[('source_ajout','=','import_masse')]"/>
+
+                <separator/>
+
+                <!-- FILTRES PAR SCORE -->
+                <filter name="score_excellent" string="Excellent (>= 80)"
+                        domain="[('ai_score','&gt;=',80)]"/>
+                <filter name="score_tres_bon" string="Très bon (>= 70)"
+                        domain="[('ai_score','&gt;=',70)]"/>
+                <filter name="score_bon" string="Bon (>= 60)"
+                        domain="[('ai_score','&gt;=',60)]"/>
+                <filter name="score_moyen" string="Moyen (>= 50)"
+                        domain="[('ai_score','&gt;=',50)]"/>
+                <filter name="score_faible" string="Faible (&lt; 50)"
+                        domain="[('ai_score','&lt;',50)]"/>
+
+                <separator/>
+
+                <!-- FILTRES PAR RANG -->
+                <filter name="top5" string="Top 5"
+                        domain="[('ai_rank','&gt;',0),('ai_rank','&lt;=',5)]"/>
+                <filter name="top10" string="Top 10"
+                        domain="[('ai_rank','&gt;',0),('ai_rank','&lt;=',10)]"/>
+                <filter name="top20" string="Top 20"
+                        domain="[('ai_rank','&gt;',0),('ai_rank','&lt;=',20)]"/>
+                <filter name="top30" string="Top 30"
+                        domain="[('ai_rank','&gt;',0),('ai_rank','&lt;=',30)]"/>
+
+                <separator/>
+
+                <!-- FILTRES PAR RECOMMANDATION IA -->
+                <filter name="reco_shortlist" string="IA Recommande Shortlist"
+                        domain="[('recommandation_ia','=','SHORTLIST')]"/>
+                <filter name="reco_entretien" string="IA Recommande Entretien"
+                        domain="[('recommandation_ia','=','ENTRETIEN')]"/>
+                <filter name="reco_rejeter" string="IA Recommande Rejet"
+                        domain="[('recommandation_ia','=','REJETER')]"/>
+
+                <separator/>
+
+                <!-- FILTRES PAR FORMATION -->
+                <filter name="doctorat" string="Doctorat"
+                        domain="[('niveau_formation','=','doctorat')]"/>
+                <filter name="bac5" string="Bac+5"
+                        domain="[('niveau_formation','=','bac5')]"/>
+                <filter name="bac3" string="Bac+3"
+                        domain="[('niveau_formation','=','bac3')]"/>
+                <filter name="bac2" string="Bac+2"
+                        domain="[('niveau_formation','=','bac2')]"/>
+
+                <separator/>
+
+                <!-- FILTRES PAR EXPÉRIENCE -->
+                <filter name="exp_senior" string="Senior (>= 5 ans)"
+                        domain="[('experience_years','&gt;=',5)]"/>
+                <filter name="exp_confirme" string="Confirmé (3-5 ans)"
+                        domain="[('experience_years','&gt;=',3),('experience_years','&lt;',5)]"/>
+                <filter name="exp_junior" string="Junior (1-3 ans)"
+                        domain="[('experience_years','&gt;=',1),('experience_years','&lt;',3)]"/>
+                <filter name="exp_debutant" string="Débutant (&lt; 1 an)"
+                        domain="[('experience_years','&lt;',1)]"/>
+
+                <separator/>
+
+                <!-- GROUPER PAR -->
+                <group expand="0" string="Grouper par">
+                    <filter name="group_job" string="Offre"
+                            context="{'group_by': 'job_id'}"/>
+                    <filter name="group_state" string="Statut"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_reco" string="Recommandation IA"
+                            context="{'group_by': 'recommandation_ia'}"/>
+                    <filter name="group_source" string="Source"
+                            context="{'group_by': 'source'}"/>
+                    <filter name="group_source_ajout" string="Source d'ajout"
+                            context="{'group_by': 'source_ajout'}"/>
+                    <filter name="group_formation" string="Formation"
+                            context="{'group_by': 'niveau_formation'}"/>
+                    <filter name="group_localisation" string="Localisation"
+                            context="{'group_by': 'localisation'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_smart_candidat" model="ir.actions.act_window">
+        <field name="name">Candidats IA</field>
+        <field name="res_model">smart.candidat</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_smart_candidat_search"/>
+        <field name="context">{
+            'search_default_group_job': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier candidat IA
+            </p>
+            <p>
+                Les candidats sont automatiquement scorés et classés par ordre de mérite.
+            </p>
+        </field>
+    </record>
+
+</odoo>

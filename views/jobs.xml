@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<record id="hr_job_view_form_inherit" model="ir.ui.view">
+    <field name="name">hr.job.form.inherit.colorful</field>
+    <field name="model">hr.job</field>
+    <field name="inherit_id" ref="hr_recruitment.hr_job_survey"/>
+    <field name="arch" type="xml">
+        
+        <xpath expr="//notebook" position="inside">
+            
+            <page string="Suivi Recrutement" name="job_status">
+                <group style="padding: 16px; border: 1px solid #d1d5db; border-left: 5px solid #06b6d4; border-radius: 6px; background-color: #f0f9ff;">
+                    
+                    <group string="Statut &amp; Délai">
+                        <field name="status" 
+                               decoration-success="status == 'cloture'"
+                               decoration-warning="status == 'en_cours'"
+                               decoration-danger="status == 'annule'"
+                               decoration-info="status == 'non_comm'"
+                               decoration-muted="status == 'retour'"/>
+                        <field name="jours_restants" 
+                               invisible="[('jours_restants', '&lt;=', 0)]"/>
+                    </group>
+                    
+                    <group string="Suivi des Vagues CV">
+                        <label for="dateenvoi1" string="Première Vague"/>
+                        <div class="o_row">
+                            <field name="dateenvoi1" nolabel="1" placeholder="Date..."/>
+                            <field name="nbrenvoie1" nolabel="1" placeholder="Nb CVs..."/>
+                        </div>
+                        
+                        <label for="dateenvoi2" string="Deuxième Vague"/>
+                        <div class="o_row">
+                            <field name="dateenvoi2" nolabel="1" placeholder="Date..."/>
+                            <field name="nbrenvoie2" nolabel="1" placeholder="Nb CVs..."/>
+                        </div>
+                        
+                        <label for="dateenvoi3" string="Troisième Vague"/>
+                        <div class="o_row">
+                            <field name="dateenvoi3" nolabel="1" placeholder="Date..."/>
+                            <field name="nbrenvoie3" nolabel="1" placeholder="Nb CVs..."/>
+                        </div>
+                    </group>
+                </group>
+            </page>
+            
+            <page string="Documents Requis" name="required_documents">
+                <group> <group name="doc_col_left">
+                        <group string="Identité &amp; Administratif">
+                            <field name="copy_cin"/>
+                            <field name="doc_cv"/>
+                            <field name="doc_diplomes"/>
+                            <field name="doc_rib"/>
+                        </group>
+                        <group string="Familiaux">
+                            <field name="doc_acte_mariage"/>
+                            <field name="doc_extraits_naissance"/>
+                        </group>
+                    </group>
+                    
+                    <group name="doc_col_right">
+                        <group string="Professionnels">
+                            <field name="doc_demission"/>
+                            <field name="doc_bulletins_paie"/>
+                            <field name="doc_attestation_libre"/>
+                            <field name="doc_certificats_travail"/>
+                        </group>
+                        <group string="Médicaux">
+                            <field name="doc_anthropometrique"/>
+                            <field name="doc_radiologie"/>
+                        </group>
+                    </group>
+                    
+                </group>
+            </page>
+            <!-- PAGE CRITÈRES IA -->
+            <page string="Critères IA" name="criteres_ia">
+                <group>
+                    <group string="Paramètres Shortlisting">
+                        <field name="offre_ia_id"/>
+                        <field name="nb_shortlist"/>  
+                        <field name="score_minimum"/>                   
+                        <field name="experience_min"/>
+                        <field name="niveau_formation_requis"/>
+                        <field name="localisation"/>
+                        <field name="secteur_activite"/>
+                    </group>
+                    <group string="Compétences">
+                        <field name="competences_requises" placeholder="Ex: Python, Django, SQL..."/>
+                        <field name="competences_bonus" placeholder="Ex: Docker, Redis..."/>
+                    </group>
+                </group>
+                <group string="Critères non-négociables">
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Attention :</strong> Si un candidat ne remplit pas un seul critère, il sera automatiquement <strong>rejeté</strong>.
+                    </div>
+                    <field name="criteres_obligatoires" nolabel="1"
+                        placeholder="Ex: Bac+5 obligatoire&#10;Minimum 2 ans expérience&#10;Maîtrise Django"/>
+                </group>
+                <group string="Autres critères">
+                    <field name="criteres_autres" nolabel="1"
+                        placeholder="Ex: Expérience Docker appréciée"/>
+                </group>
+                <div class="o_row mt-3">
+                    <button name="action_scorer_tous_candidats"
+                            string="Scorer tous les candidats"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_importer_cvs"
+                            string="Importer plusieurs CVs"
+                            type="object"
+                            class="btn-success"/>
+                </div>
+            </page>
+
+            <!-- PAGE INFORMATIONS RTP -->
+            <page string="Informations RTP" name="infos_rtp">
+                <group>
+                    <group string="Informations de l'affaire">
+                        <field name="reference_externe"/>
+                        <field name="affaire_numero"/>
+                        <field name="client_demandeur"/>
+                        <field name="motif_recrutement"/>
+                        <field name="budget_poste"/>
+                        <field name="date_prevue_demarrage"/>
+                    </group>
+                    <group string="Profil démographique">
+                        <field name="age_souhaite"/>
+                        <field name="sexe_souhaite"/>
+                    </group>
+                </group>
+                <group string="Détails du poste">
+                    <field name="missions_taches"
+                        placeholder="Décrivez les missions principales..."/>
+                    <field name="qualites_personnelles"
+                        placeholder="Ex: Autonomie, rigueur..."/>
+                    <field name="connaissances_specifiques"
+                        placeholder="Ex: SAP, AutoCAD..."/>
+                    <field name="autres_avantages"
+                        placeholder="Ex: Mutuelle, primes..."/>
+                </group>
+            </page>
+            
+        </xpath>
+    </field>
+</record>
+
+        <record id="hr_job_kanban_enhanced_v18" model="ir.ui.view">
+            <field name="name">hr.job.kanban.enhanced.v18.colorful</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment.view_hr_job_kanban"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='color']" position="after">
+                    <field name="nb_shortlist"/>
+                    <field name="score_minimum"/>
+                    <field name="offre_ia_id"/>
+                    <field name="status"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="skill_ids"/>
+                    <field name="industry_id"/>
+                    <field name="contract_type_id"/>
+                    <field name="dateenvoi1"/>
+                    <field name="nbrenvoie1"/>
+                    <field name="jours_restants"/>
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="replace">
+                    <div style="padding: 20px; border-bottom: 3px solid #34d399; background-color: #ffffff;">
+                        
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="flex-shrink: 0;">
+                                <t t-if="record.department_id.raw_value">
+                                    <img t-attf-src="/web/image/hr.department/#{record.department_id.raw_value}/logo" 
+                                         style="width: 64px; height: 64px; border-radius: 4px; object-fit: cover; background: #f9fafb; border: 1px solid #d1d5db; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);" 
+                                         alt="Logo"/>
+                                </t>
+                            </div>
+                            
+                            <div style="flex: 1; min-width: 0;">
+                                <h3 style="margin: 0 0 6px 0; color: #1f2937; font-size: 1.1rem; font-weight: 600; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    <field name="name"/>
+                                </h3>
+                                <t t-if="record.department_id.value">
+                                    <div style="font-size: 0.75rem; color: #374151; font-weight: 500; display: inline-block; padding: 4px 8px; background-color: #e5e7eb; border-radius: 4px;">
+                                        <field name="department_id"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="padding: 20px; background: #f9fafb;">
+                        
+                    <t t-if="record.status.value">
+                        <div style="margin-bottom: 18px; display: flex; justify-content: center; align-items: center;">
+                            <t t-if="record.status.raw_value == 'en_cours'">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.6875rem; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; background-color: #eff6ff; color: #1e40af; border: 1px solid #93c5fd;">
+                                    <span style="width: 6px; height: 6px; background: #3b82f6; border-radius: 50%;"/>
+                                    En cours
+                                </span>
+                            </t>
+                            <t t-elif="record.status.raw_value == 'non_comm'">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.6875rem; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; background-color: #fffbeb; color: #92400e; border: 1px solid #fde047;">
+                                    <i class="fa fa-hourglass-start" style="font-size: 0.75rem;"/>
+                                    Non Commencé
+                                </span>
+                            </t>
+                            <t t-elif="record.status.raw_value == 'cloture'">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.6875rem; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">
+                                    <i class="fa fa-check-circle" style="font-size: 0.75rem;"/>
+                                    Clôturé
+                                </span>
+                            </t>
+                            <t t-elif="record.status.raw_value == 'annule'">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.6875rem; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db;">
+                                    <i class="fa fa-times-circle" style="font-size: 0.75rem;"/>
+                                    Annulé
+                                </span>
+                            </t>
+                            
+                            <t t-elif="record.status.raw_value == 'retour'">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.6875rem; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; background-color: #f5f3ff; color: #5b21b6; border: 1px solid #c4b5fd;">
+                                    <i class="fa fa-clock-o" style="font-size: 0.75rem;"/>
+                                    En Attente Retour Client
+                                </span>
+                            </t>
+                            <t t-else="">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.6875rem; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; background-color: #f0fdf4; color: #15803d; border: 1px solid #dcfce7;">
+                                    <i class="fa fa-star" style="font-size: 0.75rem;"/>
+                                    Nouveau
+                                </span>
+                            </t>
+                        </div>
+                    </t>
+
+
+
+                        <t t-if="record.industry_id.value or record.contract_type_id.value">
+                            <div style="background-color: #f0fdf4; border: 1px solid #dcfce7; border-radius: 6px; padding: 16px; margin-bottom: 18px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <t t-if="record.industry_id.value">
+                                        <div>
+                                            <div style="font-size: 0.625rem; color: #65a30d; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                                Secteur d'activité
+                                            </div>
+                                            <div style="font-size: 0.875rem; font-weight: 600; color: #166534;">
+                                                <field name="industry_id"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    
+                                    <t t-if="record.contract_type_id.value">
+                                        <div>
+                                            <div style="font-size: 0.625rem; color: #65a30d; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                                Type d'emploi
+                                            </div>
+                                            <div style="font-size: 0.875rem; font-weight: 600; color: #166534;">
+                                                <field name="contract_type_id"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="record.skill_ids.raw_value and record.skill_ids.raw_value.length > 0">
+                            <div style="margin-bottom: 18px;">
+                                <div style="font-size: 0.6875rem; color: #374151; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; border-left: 3px solid #6366f1; padding-left: 8px;">
+                                    Compétences requises
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                    <field name="skill_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="record.date_from.value or record.date_to.value">
+                            <div style="background-color: #eff6ff; border: 1px solid #dbeafe; border-radius: 6px; padding: 16px; margin-bottom: 18px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <t t-if="record.date_from.value">
+                                        <div>
+                                            <div style="font-size: 0.625rem; color: #3b82f6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                                Date de demande
+                                            </div>
+                                            <div style="font-size: 0.875rem; font-weight: 600; color: #1e40af; font-family: monospace;">
+                                                <field name="date_from"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    
+                                    <t t-if="record.date_to.value">
+                                        <div>
+                                            <div style="font-size: 0.625rem; color: #3b82f6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                                Date d'échéance
+                                            </div>
+                                            <div style="font-size: 0.875rem; font-weight: 600; color: #1e40af; font-family: monospace;">
+                                                <field name="date_to"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                                
+                                <t t-if="record.date_to.value">
+                                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #dbeafe;">
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 0.625rem; color: #3b82f6; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                                <i class="fa fa-clock-o" style="margin-right: 4px;"/>
+                                                Jours restants
+                                            </div>
+                                            <t t-if="record.jours_restants.raw_value &gt; 0">
+                                                <div style="font-size: 1.5rem; font-weight: 700; color: #16a34a; line-height: 1;">
+                                                    <field name="jours_restants"/> jours
+                                                </div>
+                                            </t>
+                                            <t t-elif="record.jours_restants.raw_value == 0">
+                                                <div style="font-size: 1.5rem; font-weight: 700; color: #ea580c; line-height: 1;">
+                                                    Aujourd'hui
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626; line-height: 1;">
+                                                    <field name="jours_restants"/> jours (Expiré)
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px;">
+                            <div style="text-align: center; padding: 12px; background-color: #ffffff; border-radius: 4px; border: 1px solid #a5b4fc; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
+                                <div style="font-size: 1.25rem; font-weight: 700; color: #4338ca; line-height: 1; margin-bottom: 4px;">
+                                    <field name="new_application_count"/>
+                                </div>
+                                <div style="font-size: 0.625rem; color: #4f46e5; font-weight: 600; text-transform: uppercase;">
+                                    Nouveaux
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; padding: 12px; background-color: #ffffff; border-radius: 4px; border: 1px solid #fecaca; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
+                                <div style="font-size: 1.25rem; font-weight: 700; color: #b91c1c; line-height: 1; margin-bottom: 4px;">
+                                    <field name="no_of_recruitment"/>
+                                </div>
+                                <div style="font-size: 0.625rem; color: #ef4444; font-weight: 600; text-transform: uppercase;">
+                                    Attendus
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; padding: 12px; background-color: #ffffff; border-radius: 4px; border: 1px solid #d1d5db; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
+                                <div style="font-size: 1.25rem; font-weight: 700; color: #374151; line-height: 1; margin-bottom: 4px;">
+                                    <field name="application_count"/>
+                                </div>
+                                <div style="font-size: 0.625rem; color: #6b7280; font-weight: 600; text-transform: uppercase;">
+                                    Total
+                                </div>
+                            </div>
+                        </div>
+                        <!-- BLOC IA -->
+                        <t t-if="record.offre_ia_id.raw_value">
+                            <div style="background-color: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 6px; padding: 16px; margin-bottom: 18px;">
+                                <div style="font-size: 0.625rem; color: #4338ca; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
+                                    Paramètres IA
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                    <div>
+                                        <div style="font-size: 0.625rem; color: #4338ca; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                            Score minimum
+                                        </div>
+                                        <div style="font-size: 0.875rem; font-weight: 700; color: #4338ca;">
+                                            <field name="score_minimum"/> / 100
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.625rem; color: #4338ca; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                            Top N shortlist
+                                        </div>
+                                        <div style="font-size: 0.875rem; font-weight: 700; color: #4338ca;">
+                                            <field name="nb_shortlist"/> candidats
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                            <div style="background-color: #fef3c7; border: 1px solid #fde047; border-radius: 6px; padding: 16px; margin-bottom: 18px;">
+                            <div style="font-size: 0.625rem; color: #92400e; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                <i class="fa fa-paper-plane" style="font-size: 0.75rem;"/>
+                                Première vague CV
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div>
+                                    <div style="font-size: 0.625rem; color: #78350f; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                        Date d'envoi
+                                    </div>
+                                    <div style="font-size: 0.875rem; font-weight: 600; color: #92400e; font-family: monospace;">
+                                        <t t-if="record.dateenvoi1.value">
+                                            <field name="dateenvoi1"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span style="color: #9ca3af; font-style: italic;">N/A</span>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div style="font-size: 0.625rem; color: #78350f; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                                        Nombre envoyés
+                                    </div>
+                                    <div style="font-size: 0.875rem; font-weight: 600; color: #92400e;">
+                                        <t t-if="record.nbrenvoie1.value">
+                                            <field name="nbrenvoie1"/> CV
+                                        </t>
+                                        <t t-else="">
+                                            <span style="color: #9ca3af; font-style: italic;">N/A</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+
+                <xpath expr="//field[@name='user_id']" position="replace">
+                    <div style="padding: 16px 20px; margin: 0 -16px -16px -16px; background-color: #ffffff; border-top: 1px solid #e5e7eb; display: flex; align-items: center; gap: 12px;">
+                        <field name="user_id" widget="many2one_avatar_user" style="border: 2px solid #34d399; border-radius: 50%;"/>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 0.625rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                                Responsable recrutement
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+
+                <xpath expr="//div[@class='col-7']" position="attributes">
+                    <attribute name="style">display: none;</attribute>
+                </xpath>
+
+                <xpath expr="//div[@class='col-5']" position="attributes">
+                    <attribute name="style">display: none;</attribute>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

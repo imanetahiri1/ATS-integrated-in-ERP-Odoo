@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="apply_multiple_attachments_and_skills_accordion" inherit_id="website_hr_recruitment.apply" name="Custom Application Form">
+
+        <xpath expr="//input[@name='Resume']/../.." position="after">
+            
+            <div class="col-12 mb-0 py-2 s_website_form_field s_website_form_custom"
+                 data-type="binary" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="cin_copy">
+                        <span class="s_website_form_label_content">CIN (Carte d'Identité)</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="cin_copy" type="file"
+                               class="form-control s_website_form_input"
+                               name="CIN_Copy"
+                               accept=".pdf,.jpg,.jpeg,.png"/>
+                        <span class="text-muted small">Upload your National Identity Card (PDF, JPG, PNG)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field s_website_form_custom"
+                 data-type="binary" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="lettre_motivation">
+                        <span class="s_website_form_label_content">Lettre de Motivation</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="lettre_motivation" type="file"
+                               class="form-control s_website_form_input"
+                               name="Lettre_Motivation"
+                               accept=".pdf"/>
+                        <span class="text-muted small">Upload your Cover Letter (PDF)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 mb-0 py-2 s_website_form_field s_website_form_custom"
+                 data-type="binary" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="diplome">
+                        <span class="s_website_form_label_content">Diplôme</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="diplome" type="file"
+                               class="form-control s_website_form_input"
+                               name="Diplome_Copy"
+                               accept=".pdf,.jpg,.jpeg,.png"/>
+                        <span class="text-muted small">Upload your Diploma (PDF, JPG, PNG)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field s_website_form_custom"
+                 data-type="binary" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="attestations_certificats">
+                        <span class="s_website_form_label_content">Attestations &amp; Certificats</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="attestations_certificats" type="file"
+                               class="form-control s_website_form_input"
+                               name="Attestations_Certificats"
+                               accept=".pdf,.jpg,.jpeg,.png"
+                               multiple="multiple"/>
+                        <span class="text-muted small">Upload all your attestations and certificates (select multiple files)</span>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        
+        <xpath expr="//input[@name='linkedin_profile']/../.." position="after">
+
+            <div class="col-12 mb-0 py-2 s_website_form_field" data-type="char" data-name="address_domicile">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="address_domicile">
+                        <span class="s_website_form_label_content">Address du Domicile</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="address_domicile" type="text"
+                               class="form-control s_website_form_input"
+                               name="address_domicile"
+                               placeholder="Entrez votre adresse de domicile"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field" data-type="char" data-name="etab">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="etab">
+                        <span class="s_website_form_label_content">Etablissement</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="etab" type="text"
+                               class="form-control s_website_form_input"
+                               name="etab"
+                               placeholder="Nom de l'établissement d'obtention"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field" data-type="date" data-name="date_opt">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="date_opt">
+                        <span class="s_website_form_label_content">Date d'obtention du Diplome</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="date_opt" type="date"
+                               class="form-control s_website_form_input"
+                               name="date_opt"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field" data-type="many2one" data-name="type_id">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px">
+                        <span class="s_website_form_label_content">Niveau de Diplôme</span>
+                    </label>
+                    <div class="col-sm">
+                        <div style="border: 1px solid #dee2e6; border-radius: .25rem; padding: 15px;">
+                            <t t-foreach="request.env['hr.recruitment.degree'].sudo().search([], order='sequence,name')" t-as="degree">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" 
+                                           type="radio" 
+                                           name="type_id" 
+                                           t-att-id="'degree_' + str(degree.id)" 
+                                           t-att-value="degree.id"
+                                           style="cursor: pointer;"/>
+                                    <label class="form-check-label" 
+                                           t-att-for="'degree_' + str(degree.id)"
+                                           style="cursor: pointer; font-weight: 400;">
+                                        <span t-esc="degree.name"/>
+                                    </label>
+                                </div>
+                            </t>
+                        </div>
+                        <small class="text-muted d-block mt-2">Sélectionnez votre niveau de diplôme</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field" data-type="many2many" data-name="Skills">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px">
+                        <span class="s_website_form_label_content">Vos Compétences</span>
+                    </label>
+                    <div class="col-sm">
+                        <div class="o_website_hr_skills_accordion_container" style="border: 1px solid #dee2e6; border-radius: .25rem;">
+                            <t t-foreach="request.env['hr.skill.type'].sudo().search([])" t-as="skill_type">
+                                
+                                <details class="o_skill_type_accordion" style="border-top: 1px solid #dee2e6; margin-top: -1px;">
+                                    
+                                    <summary style="cursor: pointer; padding: 10px 15px; font-weight: 500; background-color: #f8f9fa; color: #333; list-style: none;">
+                                        <i class="fa fa-chevron-right" style="margin-right: 10px; font-size: 0.8em;"></i>
+                                        <span t-esc="skill_type.name"/>
+                                    </summary>
+                                    
+                                    <div class="p-3" style="border-top: 1px solid #eee;">
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <t t-foreach="skill_type.skill_ids" t-as="skill">
+                                                <label class="btn btn-sm btn-outline-secondary" 
+                                                       style="
+                                                               border-radius: 20px; 
+                                                               padding: 5px 15px; 
+                                                               margin-bottom: 5px; 
+                                                               cursor: pointer; 
+                                                               flex-grow: 0;
+                                                              ">
+                                                    
+                                                    <input type="checkbox" 
+                                                           name="skill_ids" 
+                                                           t-att-value="skill.id" 
+                                                           style="display: none;"
+                                                           onclick="
+                                                                   this.closest('label').classList.toggle('btn-outline-secondary'); 
+                                                                   this.closest('label').classList.toggle('btn-primary'); 
+                                                                   this.closest('label').style.color=this.checked ? 'white' : ''; 
+                                                                   this.closest('label').style.backgroundColor=this.checked ? '#7b7ff7' : '';
+                                                                   this.closest('label').style.borderColor=this.checked ? '#7b7ff7' : '';"
+                                                    />
+                                                    
+                                                    <span t-esc="skill.name"/>
+                                                </label>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </details>
+                            </t>
+                        </div>
+                        <small class="text-muted d-block mt-2">Cliquez sur le type de compétence pour développer et sélectionner vos compétences.</small>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+    
+        
+        <xpath expr="//div[hasclass('s_website_form_submit')]" position="before">
+            <div class="col-12 s_website_form_field s_website_form_required" 
+                 data-type="boolean" 
+                 data-name="privacy_policy">
+                
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-sm-auto col-form-label s_website_form_label d-none" 
+                           for="privacy_policy_checkbox">Privacy Policy</label>
+                    <div class="col-sm">
+                        <div class="form-check">
+                            <input id="privacy_policy_checkbox" 
+                                   type="checkbox" 
+                                   class="form-check-input s_website_form_input" 
+                                   name="privacy_policy" 
+                                   required="1"/>
+                            <label class="form-check-label s_website_form_label" 
+                                   for="privacy_policy_checkbox">
+                                J'ai lu et j'accepte la politique de confidentialité concernant le traitement de mes données personnelles.
+                            </label>
+                            <div class="s_website_form_invalid-feedback"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        
+    </template>
+
+    </odoo>
